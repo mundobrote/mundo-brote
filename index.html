@@ -518,6 +518,48 @@
             border-radius: 10px;
         }
 
+        /* ESTILO PARA SELECTOR DE OPCIONES CON MUESTRA DE COLOR (SWATCH) */
+        .options-container {
+            margin-top: 12px;
+            margin-bottom: 6px;
+            text-align: left;
+        }
+        .options-container label {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #81c784;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .options-flex-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .color-swatch {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            flex-shrink: 0;
+            transition: background-color 0.25s ease;
+        }
+        .options-select {
+            flex-grow: 1;
+            padding: 10px 14px;
+            background: #232a26;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 0.9rem;
+            outline: none;
+            cursor: pointer;
+        }
+        .options-select:focus {
+            border-color: #4caf50;
+        }
+
         .btn-toggle-info { 
             width: 100%; 
             padding: 13px 16px; 
@@ -792,6 +834,15 @@
                 </div>
 
                 <div class="modal-body-scroll">
+                    <!-- CONTENEDOR DESPLEGABLE DE COLORES / OPCIONES CON MUESTRA (SWATCH) -->
+                    <div id="optionsWrapper" class="options-container" style="display: none;">
+                        <label for="variantSelect">🎨 Selecciona un color / opción:*</label>
+                        <div class="options-flex-row">
+                            <div id="colorSwatch" class="color-swatch"></div>
+                            <select id="variantSelect" class="options-select" onchange="checkVariantStock()"></select>
+                        </div>
+                    </div>
+
                     <button id="btnGrowBox" class="btn-toggle-info" onclick="toggleBox('growBox')">✨ ¿Cómo será de grande? <span>▼</span></button>
                     <div id="growBox" class="toggle-box">
                         <p style="margin-bottom:8px;">Así lucirá desarrollada:</p>
@@ -1106,6 +1157,7 @@
         let cart = JSON.parse(localStorage.getItem('mb_cart')) || [];
         let currentPlant = {};
         let stockStatusMap = {};
+        let optionsListMap = {};
 
         function cleanText(str) {
             if (!str) return "";
@@ -1115,6 +1167,26 @@
                 .toLowerCase()
                 .replace(/\s+/g, " ")
                 .trim();
+        }
+
+        // Convierte el nombre de la planta y del color en el nombre exacto del archivo .jpg
+        function generateAutoImgPath(plantName, colorName) {
+            const cleanPlant = cleanText(plantName).replace(/\(.*?\)/g, '').trim().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+            const cleanColor = cleanText(colorName).replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+            return `opciones-flores/${cleanPlant}-${cleanColor}.jpg`;
+        }
+
+        function getColorHex(colorText) {
+            const str = cleanText(colorText);
+            if (str.includes('rosa') || str.includes('rosado')) return '#ff69b4';
+            if (str.includes('morado') || str.includes('purpura') || str.includes('violeta')) return '#8a2be2';
+            if (str.includes('rojo')) return '#e53935';
+            if (str.includes('amarillo')) return '#fdd835';
+            if (str.includes('blanco')) return '#ffffff';
+            if (str.includes('azul')) return '#1e88e5';
+            if (str.includes('naranja')) return '#fb8c00';
+            if (str.includes('verde')) return '#4caf50';
+            return '#81c784';
         }
 
         function parseCSVLine(line) {
@@ -1149,21 +1221,43 @@
                 const csvText = await response.text();
 
                 stockStatusMap = {};
+                optionsListMap = {};
                 const lines = csvText.split(/\r\n|\n/);
 
                 if (lines.length > 1) {
                     const headers = parseCSVLine(lines[0]).map(h => cleanText(h));
                     const nameIndex = headers.findIndex(h => h.includes('nombre'));
-                    const statusIndex = headers.findIndex(h => h.includes('estado'));
+                    const statusIndex = headers.findIndex(h => h === 'estado');
 
-                    if (nameIndex !== -1 && statusIndex !== -1) {
+                    if (nameIndex !== -1) {
                         for (let i = 1; i < lines.length; i++) {
                             if (!lines[i].trim()) continue;
                             const cols = parseCSVLine(lines[i]);
-                            if (cols[nameIndex] !== undefined && cols[statusIndex] !== undefined) {
-                                const plantName = cleanText(cols[nameIndex]);
-                                const plantStatus = cleanText(cols[statusIndex]);
-                                stockStatusMap[plantName] = plantStatus;
+                            if (cols[nameIndex] !== undefined) {
+                                const rawPlantName = cols[nameIndex];
+                                const plantName = cleanText(rawPlantName);
+                                
+                                if (statusIndex !== -1 && cols[statusIndex] !== undefined) {
+                                    stockStatusMap[plantName] = cleanText(cols[statusIndex]);
+                                }
+
+                                // BUSCAR COLUMNAS PAREADAS DE OPCIONES Y SUS ESTADOS
+                                let variants = [];
+                                for (let c = 3; c < cols.length; c += 2) {
+                                    const optNameRaw = cols[c];
+                                    const optStatusRaw = cols[c + 1];
+
+                                    if (optNameRaw && optNameRaw.trim() !== "") {
+                                        const name = optNameRaw.trim();
+                                        const status = optStatusRaw ? cleanText(optStatusRaw) : "disponible";
+                                        const autoImg = generateAutoImgPath(rawPlantName, name);
+                                        variants.push({ name, status, img: autoImg });
+                                    }
+                                }
+
+                                if (variants.length > 0) {
+                                    optionsListMap[plantName] = variants;
+                                }
                             }
                         }
                     }
@@ -1171,7 +1265,7 @@
                 renderCatalog();
                 renderNovedades();
             } catch (error) {
-                console.warn("No se pudo descargar el stock. Se mostrará el catálogo normal.", error);
+                console.warn("No se pudo descargar el stock de Google Sheets.", error);
                 renderCatalog();
                 renderNovedades();
             }
@@ -1263,7 +1357,7 @@
         }
 
         function openModal(nombre, precio, cuidados, imgReal, imgRef, isAgotado = false) {
-            currentPlant = { nombre, precio, isAgotado };
+            currentPlant = { nombre, precio, isAgotado, defaultImg: imgReal };
             document.getElementById('modalTitle').innerText = nombre;
             document.getElementById('modalPrice').innerText = precio;
             
@@ -1289,12 +1383,39 @@
                 btnGrow.style.display = "none";
             }
 
+            const cleanName = cleanText(nombre);
+            const variants = optionsListMap[cleanName];
+            
+            const optionsWrapper = document.getElementById('optionsWrapper');
+            const variantSelect = document.getElementById('variantSelect');
+
+            if (variants && variants.length > 0) {
+                variantSelect.innerHTML = '';
+
+                variants.forEach(item => {
+                    const isOptAgotado = (item.status === 'agotado');
+
+                    const optElement = document.createElement('option');
+                    optElement.value = item.name;
+                    optElement.innerText = item.name + (isOptAgotado ? ' (Agotado)' : '');
+                    if (item.img) optElement.dataset.img = item.img;
+                    if (isOptAgotado) optElement.dataset.agotado = 'true';
+
+                    variantSelect.appendChild(optElement);
+                });
+
+                optionsWrapper.style.display = 'block';
+            } else {
+                optionsWrapper.style.display = 'none';
+            }
+
             if (isAgotado) {
                 btnAdd.disabled = true;
                 btnAdd.innerText = "🚫 Producto Agotado";
             } else {
                 btnAdd.disabled = false;
                 btnAdd.innerText = "🛒 Agregar al Carrito";
+                checkVariantStock();
             }
 
             document.getElementById('growBox').style.display = "none";
@@ -1302,14 +1423,62 @@
             document.getElementById('plantModal').style.display = "flex";
         }
 
+        function checkVariantStock() {
+            const optionsWrapper = document.getElementById('optionsWrapper');
+            const btnAdd = document.getElementById('btnModalAdd');
+            const modalImg = document.getElementById('modalImg');
+
+            if (optionsWrapper.style.display === 'block' && !currentPlant.isAgotado) {
+                const variantSelect = document.getElementById('variantSelect');
+                const selectedOpt = variantSelect.options[variantSelect.selectedIndex];
+
+                if (selectedOpt) {
+                    const colorName = selectedOpt.value;
+                    const autoImg = selectedOpt.dataset.img;
+                    const isOptAgotado = selectedOpt.dataset.agotado === 'true';
+
+                    // Carga la foto del color generado automáticamente. Si no existe la foto, mantiene la principal sin romper nada.
+                    if (autoImg) {
+                        const tempImg = new Image();
+                        tempImg.onload = function() { modalImg.src = autoImg; };
+                        tempImg.onerror = function() { if (currentPlant.defaultImg) modalImg.src = currentPlant.defaultImg; };
+                        tempImg.src = autoImg;
+                    } else if (currentPlant.defaultImg) {
+                        modalImg.src = currentPlant.defaultImg;
+                    }
+
+                    const swatch = document.getElementById('colorSwatch');
+                    swatch.style.backgroundColor = getColorHex(colorName);
+
+                    if (isOptAgotado) {
+                        btnAdd.disabled = true;
+                        btnAdd.innerText = "🚫 Color Agotado";
+                    } else {
+                        btnAdd.disabled = false;
+                        btnAdd.innerText = "🛒 Agregar al Carrito";
+                    }
+                }
+            }
+        }
+
         function addToCartCurrent() {
             if (currentPlant.isAgotado) return;
 
-            cart.push({ nombre: currentPlant.nombre, precio: currentPlant.precio });
+            let finalName = currentPlant.nombre;
+            const optionsWrapper = document.getElementById('optionsWrapper');
+            
+            if (optionsWrapper.style.display === 'block') {
+                const selectedOption = document.getElementById('variantSelect').value;
+                if (selectedOption) {
+                    finalName += ` (Color: ${selectedOption})`;
+                }
+            }
+
+            cart.push({ nombre: finalName, precio: currentPlant.precio });
             localStorage.setItem('mb_cart', JSON.stringify(cart));
             updateCartBadge();
             closeModal();
-            alert(`¡${currentPlant.nombre} se agregó al carrito! 🌿`);
+            alert(`¡${finalName} se agregó al carrito! 🌿`);
         }
 
         function updateCartBadge() {
