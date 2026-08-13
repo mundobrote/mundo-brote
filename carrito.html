@@ -404,7 +404,7 @@
                 <label for="shippingMethod">Selecciona la opción de entrega:*</label>
                 <select id="shippingMethod" onchange="toggleShippingOptions()">
                     <option value="Metro de Santiago">🚇 Opción 1: Entrega en Estación de Metro ($1.500)</option>
-                    <option value="Envío a Domicilio">🏠 Opción 2: Envío a Domicilio ($2.990)</option>
+                    <option value="Envío a Domicilio">🏠 Opción 2: Envío a Domicilio ($3.500)</option>
                     <option value="Retiro en Sucursal">📍 Opción 3: Retiro en Sucursal (Gratis)</option>
                 </select>
 
@@ -625,7 +625,7 @@
             if (method.includes('Metro')) {
                 document.getElementById('cartShippingSum').innerText = (currentShippingCost === 0) ? "$0 (¡GRATIS!)" : "$1.500";
             } else if (method.includes('Domicilio')) {
-                document.getElementById('cartShippingSum').innerText = "$2.990";
+                document.getElementById('cartShippingSum').innerText = "$3.500";
             } else {
                 document.getElementById('cartShippingSum').innerText = "$0 (Gratis)";
             }
