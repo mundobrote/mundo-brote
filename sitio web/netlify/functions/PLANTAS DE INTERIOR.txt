@@ -1,0 +1,106 @@
+// PLANTAS DE INTERIOR
+            {
+                nombre: "Ficus Danielle",
+                categoria: "interior",
+                precio: "$7.000",
+                foto: "interior/ficus.jpg",
+                fotoGrande: "interior/ficusgrande.jpg",
+                cuidados: "💚 Cuidados: Ficus Benjamina Variegado\n📊 Dificultad: Media ⭐⭐⭐☆☆\n\n☀️ Luz: Mucha luz indirecta brillante. Necesita luz intensa para mantener sus bordes blancos tan intensos.\n💧 Agua: Moderada. Riega de forma uniforme manteniendo el sustrato húmedo, pero sin encharcar para evitar que se pudran las raíces.\n⚠️ Precaución: Sensible a las corrientes de aire frío del invierno y a los cambios bruscos de lugar."
+            },
+            {
+                nombre: "Ficus Hawaiano (Ficus variegado)",
+                categoria: "interior",
+                precio: "$7.000",
+                foto: "interior/FicusHawaiano.jpg",
+                fotoGrande: "interior/ficushawaianogrande.jpg.jpg",
+                cuidados: "💚 Cuidados: Ficus Lyrata / Pandurata\n📊 Dificultad: Media/Alta ⭐⭐⭐☆☆\n\n☀️ Luz: Luz indirecta muy brillante o semisombra luminosa. Colócalo cerca de una ventana muy iluminada.\n💧 Agua: Moderada. Riega solo cuando los primeros centímetros del sustrato estén secos. Odia el exceso de agua.\n⚠️ Precaución: Limpia el polvo de sus densas y grandes hojas para mantener su fotosíntesis activa. Evita cambiarlo de sitio."
+            },
+            {
+                nombre: "Tradescantia zebrina",
+                categoria: "interior",
+                precio: "$6.500",
+                foto: "interior/tradescantia.jpg",
+                fotoGrande: "interior/tradescantiagrande.jpg",
+                cuidados: "📊 Nivel de cuidado: Fácil / Principiante ⭐☆☆☆☆\n\n☀️ Sol: Luz indirecta brillante. Necesita mucha luz para mantener sus intensos tonos morados.\n💧 Agua: Moderada. Riega cuando los primeros centímetros estén secos.\n⚠️ Precaución: Tóxica para mascotas. Ve cortando las puntas para replantar y mantenerla tupida."
+            },
+            {
+                nombre: "Tradescantia fluminensis",
+                categoria: "interior",
+                precio: "$7.000",
+                foto: "interior/Tradescantiafluminensis.jpg",
+                fotoGrande: "interior/Tradescantiafluminensisgrande.jpg",
+                cuidados: "📊 Nivel de cuidado: Fácil / Principiante ⭐☆☆☆☆\n\n☀️ Sol: Luz indirecta brillante. Necesita mucha luz para mantener sus intensos tonos morados.\n💧 Agua: Moderada. Riega cuando los primeros centímetros estén secos.\n⚠️ Precaución: Tóxica para mascotas. Ve cortando las puntas para replantar y mantenerla tupida."
+            },
+            {
+                nombre: "Plumoso",
+                categoria: "interior",
+                precio: "$4.500",
+                foto: "interior/plumoso.jpg",
+                fotoGrande: "interior/plumosogrande.jpg",
+                cuidados: "📊 Nivel de cuidado: Intermedio ⭐⭐⭐☆☆\n\n☀️ Sol: Luz indirecta brillante o semisombra.\n💧 Agua: Frecuente. Necesita que el sustrato esté siempre ligeramente húmedo.\n⚠️ Precaución: Requiere alta humedad ambiental. Desarrolla pequeñas espinas."
+            },
+            {
+                nombre: "Cucharita (Peperomia)",
+                categoria: "interior",
+                precio: "$6.500",
+                foto: "interior/cucharita.jpg",
+                fotoGrande: "interior/cucharitagrande.jpg",
+                cuidados: "☀️ Luz: Luz indirecta brillante. El sol directo del mediodía quemará sus delicadas hojas.\n💧 Agua: Moderada. Riega cuando los primeros centímetros de tierra estén secos.\n⚠️ Precaución: Sensible al frío y a las heladas. Es completamente segura para mascotas."
+            },
+            {
+                nombre: "Pink Lady (Callisia repens)",
+                categoria: "interior",
+                precio: "$4.500",
+                foto: "interior/pink.jpg",
+                fotoGrande: "interior/pinkgrande.jpg",
+                cuidados: "☀️ Luz: Mucha luz indirecta muy brillante para mantener sus tonos rosados.\n💧 Agua: Moderada. Deja que la mitad superior del sustrato se seque entre riegos.\n⚠️ Precaución: Requiere podas frecuentes en las puntas para mantener una forma compacta y redondeada."
+            },
+            {
+                nombre: "Singonio Verde",
+                categoria: "interior",
+                precio: "$5.500",
+                foto: "interior/singonioverde.jpg",
+                fotoGrande: "interior/singonioverdegrande.jpg",
+                cuidados: "☀️ Luz: Luz indirecta brillante a semisombra.\n💧 Agua: Moderada. Riega cuando la superficie de la tierra se note seca (2-3 cm).\n⚠️ Precaución: Le encanta la humedad ambiental. Con el tiempo sacará guías trepadoras que puedes podar o tutorar."
+            },
+            {
+                nombre: "Singonio Variegado Albo",
+                categoria: "interior",
+                precio: "$10.000",
+                foto: "interior/singonioalbo.jpg",
+                fotoGrande: "interior/singonioalbogrande.jpg",
+                cuidados: "☀️ Luz: Luz indirecta muy brillante para conservar sus manchas blancas.\n💧 Agua: Moderada. Espera a que la mitad superior del sustrato se seque antes de regar.\n⚠️ Precaución: Requiere una humedad ambiental superior al 50% para proteger sus partes blancas."
+            },
+            {
+                nombre: "Incienso (Planta del incienso)",
+                categoria: "interior",
+                precio: "$2.000",
+                foto: "interior/incienso.jpg",
+                fotoGrande: "interior/inciensogrande.jpg",
+                cuidados: "☀️ Luz: Luz indirecta brillante a semisombra.\n💧 Agua: Alta. El sustrato debe mantenerse siempre ligeramente húmedo sin encharcar.\n⚠️ Precaución: Exige alta humedad ambiental. Es una planta 100% Pet Friendly."
+            },
+            {
+                nombre: "Dólar Blanco ( Planta del dinero)",
+                categoria: "interior",
+                precio: "$3.500",
+                foto: "interior/dolar.jpg",
+                fotoGrande: "interior/dolargrande.jpg",
+                cuidados: "☀️ Luz: Luz indirecta brillante. Agradece un par de horas de sol suave matutino.\n💧 Agua: Moderada a baja. Deja secar bien el sustrato entre riegos.\n⚠️ Precaución: Realiza despuntes frecuentes en las puntas jóvenes para estimular un crecimiento tupido y arbustivo."
+            },
+            {
+                nombre: "Helecho ( Helecho Espada)",
+                categoria: "interior",
+                precio: "$4.500",
+                foto: "interior/helecho.jpg",
+                fotoGrande: "interior/helechogrande.jpg",
+                cuidados: "☀️ Luz: Luz indirecta brillante o sol suave de la mañana. Tolera semisombra en interiores bien iluminados.\n💧 Agua: Moderada a baja. Riega solo cuando el sustrato se haya secado por completo entre riegos.\n⚠️ Precaución: Evita a toda costa el encharcamiento, ya que el exceso de agua pudre rápidamente sus raíces."
+            },
+            {
+                nombre: "Monalisa (Mona Lavender)",
+                categoria: "interior",
+                precio: "$4.500",
+                foto: "interior/monalisa.jpg",
+                fotoGrande: "interior/monalisagrande.jpg",
+                cuidados: "☀️ Luz: Luz indirecta brillante. Agradece un par de horas de sol suave matutino.\n💧 Agua: Moderada a baja. Deja secar bien el sustrato entre riegos.\n⚠️ Precaución: Realiza despuntes frecuentes en las puntas jóvenes para estimular un crecimiento tupido y arbustivo."
+            },
+        

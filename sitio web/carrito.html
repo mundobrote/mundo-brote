@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras - Mundo Brote</title>
+    <!-- Tipografía Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; }
+        body { background-color: #121212; min-height: 100vh; color: #ffffff; display: flex; justify-content: center; align-items: flex-start; padding: 20px 15px; position: relative; }
+        .bg-image { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; filter: brightness(0.25); }
+        
+        .container { 
+            width: 100%; 
+            max-width: 540px; 
+            background: rgba(26, 31, 28, 0.88); 
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            color: #ffffff; 
+            border-radius: 20px; 
+            padding: 24px; 
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6); 
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.12); padding-bottom: 14px; margin-bottom: 18px; }
+        .header h1 { font-size: 1.4rem; font-weight: 700; color: #ffffff; }
+        
+        .btn-back { 
+            color: #4ade80; 
+            background: rgba(255, 255, 255, 0.08); 
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            text-decoration: none; 
+            font-weight: 600; 
+            font-size: 0.88rem; 
+            padding: 8px 16px; 
+            border-radius: 50px; 
+            transition: all 0.2s ease-in-out;
+        }
+        .btn-back:hover { 
+            color: #ffffff;
+            background: rgba(74, 222, 128, 0.2); 
+            border-color: #4ade80;
+            transform: translateY(-1px);
+        }
+
+        /* LISTADO DE PRODUCTOS */
+        .cart-items { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; max-height: 220px; overflow-y: auto; padding-right: 4px; }
+        .cart-items::-webkit-scrollbar { width: 5px; }
+        .cart-items::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+
+        .cart-item { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: rgba(0, 0, 0, 0.3); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            padding: 12px 14px; 
+            border-radius: 12px; 
+            font-size: 0.95rem; 
+        }
+        .item-info { font-weight: 600; color: #f5f5f7; }
+        .item-price { color: #4caf50; font-weight: 700; margin-top: 2px; }
+
+        .btn-remove { 
+            background: transparent; 
+            color: #ff5252; 
+            border: 1px solid rgba(255, 82, 82, 0.4); 
+            border-radius: 6px; 
+            padding: 5px 10px; 
+            cursor: pointer; 
+            font-size: 0.78rem; 
+            font-weight: 600; 
+            margin-left: 10px; 
+            transition: all 0.2s;
+        }
+        .btn-remove:hover {
+            background: rgba(255, 82, 82, 0.15);
+            border-color: #ff5252;
+        }
+
+        .free-shipping-bar { 
+            background: rgba(46, 125, 50, 0.15); 
+            border: 1px solid #2e7d32; 
+            color: #81c784; 
+            padding: 12px; 
+            border-radius: 12px; 
+            font-size: 0.9rem; 
+            font-weight: 600; 
+            text-align: center; 
+            margin-bottom: 18px; 
+        }
+
+        /* RESUMEN DE COMPRA */
+        .summary-box { 
+            background: rgba(0, 0, 0, 0.25); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            padding: 14px; 
+            border-radius: 12px; 
+            margin-bottom: 20px; 
+        }
+        .summary-line { display: flex; justify-content: space-between; font-size: 0.92rem; color: #b0bec5; margin-bottom: 8px; }
+        .cart-total { display: flex; justify-content: space-between; font-size: 1.25rem; font-weight: 800; color: #ffffff; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 10px; margin-top: 8px; }
+        .cart-total span:last-child { color: #4caf50; }
+
+        .checkout-section { 
+            background: rgba(255, 255, 255, 0.03); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            border-radius: 14px; 
+            padding: 16px; 
+            margin-bottom: 18px; 
+        }
+        .section-title { font-size: 1rem; font-weight: 700; color: #81c784; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+
+        label { font-size: 0.85rem; font-weight: 500; color: #cfd8dc; display: block; margin-top: 10px; margin-bottom: 5px; }
+
+        select, input[type="text"], input[type="email"] { 
+            width: 100%; 
+            padding: 11px 14px; 
+            background: #232a26; 
+            border: 1px solid rgba(255, 255, 255, 0.12); 
+            border-radius: 8px; 
+            font-size: 0.9rem; 
+            color: #ffffff; 
+            outline: none;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+        select:focus, input[type="text"]:focus, input[type="email"]:focus {
+            border-color: #4caf50;
+            background: #2a332f;
+        }
+        select option { background: #1a1f1c; color: #ffffff; }
+
+        .info-box-pickup { 
+            background: rgba(30, 136, 229, 0.12); 
+            border: 1px solid rgba(30, 136, 229, 0.3); 
+            padding: 12px; 
+            border-radius: 8px; 
+            font-size: 0.85rem; 
+            color: #90caf9; 
+            line-height: 1.5; 
+            margin-top: 12px; 
+        }
+
+        .bank-details { 
+            display: none; 
+            background: rgba(46, 125, 50, 0.12); 
+            border: 1px solid rgba(46, 125, 50, 0.3); 
+            padding: 14px; 
+            border-radius: 12px; 
+            font-size: 0.88rem; 
+            color: #a5d6a7; 
+            line-height: 1.7; 
+            margin-top: 12px; 
+            margin-bottom: 15px; 
+        }
+
+        .bank-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(74, 222, 128, 0.2);
+        }
+
+        .important-notice { 
+            display: none; 
+            background: rgba(255, 193, 7, 0.1); 
+            border-left: 4px solid #ffc107; 
+            padding: 14px 16px; 
+            font-size: 0.88rem; 
+            color: #ffe082; 
+            font-weight: 500; 
+            border-radius: 6px; 
+            margin-top: 14px; 
+            line-height: 1.5; 
+        }
+
+        /* BOTONES DE COPIADO RÁPIDO */
+        .btn-copy-all {
+            background: #2e7d32;
+            color: #ffffff;
+            border: none;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
+        }
+        .btn-copy-all:hover {
+            background: #388e3c;
+            transform: translateY(-1px);
+        }
+
+        .btn-copy {
+            background: rgba(74, 222, 128, 0.15);
+            color: #4ade80;
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 6px;
+            transition: all 0.2s;
+        }
+        .btn-copy:hover {
+            background: rgba(74, 222, 128, 0.3);
+            color: #ffffff;
+        }
+
+        .terms-box { 
+            background: rgba(255, 152, 0, 0.08); 
+            border: 1px solid rgba(255, 152, 0, 0.25); 
+            padding: 14px; 
+            border-radius: 10px; 
+            margin-top: 14px; 
+            font-size: 0.85rem; 
+            color: #ffe0b2; 
+            line-height: 1.5; 
+        }
+        .terms-title { font-weight: 700; color: #ffb74d; margin-bottom: 8px; }
+        .terms-list { margin-left: 16px; margin-bottom: 12px; }
+        .terms-checkbox-label { display: flex; align-items: flex-start; gap: 8px; font-weight: 600; color: #ffffff; font-size: 0.88rem; cursor: pointer; margin-top: 8px; }
+        .terms-checkbox-label input { width: auto; margin: 3px 0 0 0; cursor: pointer; accent-color: #2e7d32; }
+
+        .order-code-box { 
+            display: none; 
+            background: rgba(30, 136, 229, 0.15); 
+            border: 1px dashed #64b5f6; 
+            color: #e3f2fd; 
+            text-align: center; 
+            padding: 16px; 
+            border-radius: 12px; 
+            margin-top: 18px; 
+            font-weight: 600; 
+            font-size: 0.95rem; 
+        }
+        .order-code-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 6px;
+        }
+        .order-code-num { 
+            font-size: 1.4rem; 
+            color: #90caf9; 
+            font-weight: 800; 
+            letter-spacing: 0.5px;
+        }
+        .btn-copy-code {
+            background: #1976d2;
+            color: #ffffff;
+            border: none;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+        }
+        .btn-copy-code:hover {
+            background: #2196f3;
+            transform: translateY(-1px);
+        }
+
+        .btn-whatsapp { 
+            display: block; 
+            width: 100%; 
+            padding: 15px; 
+            background-color: #2e7d32; 
+            color: white; 
+            text-align: center; 
+            text-decoration: none; 
+            font-weight: 700; 
+            font-size: 1rem; 
+            border: none; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            margin-top: 18px; 
+            transition: background-color 0.2s, transform 0.1s;
+            box-shadow: 0 4px 14px rgba(46, 125, 50, 0.4);
+        }
+        .btn-whatsapp:hover { background-color: #388e3c; transform: translateY(-1px); }
+        .btn-whatsapp:disabled { background-color: #1b431e; color: #81c784; cursor: not-allowed; box-shadow: none; transform: none; }
+
+        .contact-options { 
+            display: none; 
+            flex-direction: column; 
+            gap: 10px; 
+            margin-top: 14px; 
+            background: rgba(0, 0, 0, 0.3); 
+            padding: 14px; 
+            border-radius: 12px; 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+        }
+        .contact-title { font-size: 0.85rem; font-weight: 600; color: #a5d6a7; text-align: center; margin-bottom: 2px; }
+        .btn-contact-num { 
+            display: block; 
+            width: 100%; 
+            padding: 12px; 
+            background-color: #25D366; 
+            color: white; 
+            text-align: center; 
+            text-decoration: none; 
+            font-weight: 700; 
+            font-size: 0.9rem; 
+            border-radius: 50px; 
+            transition: background 0.2s;
+        }
+        .btn-contact-num:hover { background-color: #20ba5a; }
+
+        .email-notice {
+            font-size: 0.78rem;
+            color: #b0bec5;
+            text-align: center;
+            margin-top: 10px;
+            line-height: 1.4;
+        }
+
+        .empty-cart { text-align: center; padding: 40px 10px; color: #b0bec5; font-size: 1rem; }
+    </style>
+</head>
+<body>
+
+    <img src="fondo.jpg" class="bg-image" alt="Fondo">
+
+    <div class="container">
+        <div class="header">
+            <h1>🛒 Tu Carrito de Compras</h1>
+            <a href="index.html" class="btn-back">← Seguir Viendo</a>
+        </div>
+
+        <div id="cartContent">
+            <div id="freeShippingNotice" class="free-shipping-bar">
+                🎉 ¡Envío GRATIS en Metro por compras sobre $15.000!
+            </div>
+
+            <div id="cartItems" class="cart-items"></div>
+
+            <div class="summary-box">
+                <div class="summary-line">
+                    <span>Subtotal Productos:</span>
+                    <span id="cartSubtotalSum">$0</span>
+                </div>
+                <div class="summary-line">
+                    <span>Costo de Envío / Entrega:</span>
+                    <span id="cartShippingSum">$1.500</span>
+                </div>
+                <div class="cart-total">
+                    <span>Total Final:</span>
+                    <span id="cartTotalSum">$0</span>
+                </div>
+            </div>
+
+            <!-- FORMULARIO 1 DE RESPALDO SILENCIOSO (paul.andresaranedaguzman@gmail.com) -->
+            <form id="emailForm1" action="https://formsubmit.co/ajax/paul.andresaranedaguzman@gmail.com" method="POST" style="display:none;">
+                <input type="hidden" name="_subject" id="f1_subject" value="Nuevo Pedido Mundo Brote">
+                <input type="hidden" name="_template" value="table">
+                <input type="hidden" name="_captcha" value="false">
+                
+                <input type="hidden" name="Codigo_Pedido" id="f1_code">
+                <input type="hidden" name="Productos_Carrito" id="f1_products">
+                <input type="hidden" name="Total_A_Pagar" id="f1_total">
+                <input type="hidden" name="Opcion_Entrega" id="f1_shipping_method">
+                <input type="hidden" name="Detalles_Entrega" id="f1_shipping_details">
+                <input type="hidden" name="Nombre_Cliente" id="f1_name">
+                <input type="hidden" name="RUT_Cliente" id="f1_rut">
+                <input type="hidden" name="Email_Cliente" id="f1_email">
+                <input type="hidden" name="Telefono_Principal" id="f1_phone">
+                <input type="hidden" name="Telefono_Adicional" id="f1_phone2">
+            </form>
+
+            <!-- FORMULARIO 2 DE RESPALDO SILENCIOSO CIFRADO POR HASH (paul.araneda@ug.uchile.cl) -->
+            <form id="emailForm2" action="https://formsubmit.co/ajax/d9728429f877a1a131fd3f3696fdc315" method="POST" style="display:none;">
+                <input type="hidden" name="_subject" id="f2_subject" value="Nuevo Pedido Mundo Brote">
+                <input type="hidden" name="_template" value="table">
+                <input type="hidden" name="_captcha" value="false">
+                
+                <input type="hidden" name="Codigo_Pedido" id="f2_code">
+                <input type="hidden" name="Productos_Carrito" id="f2_products">
+                <input type="hidden" name="Total_A_Pagar" id="f2_total">
+                <input type="hidden" name="Opcion_Entrega" id="f2_shipping_method">
+                <input type="hidden" name="Detalles_Entrega" id="f2_shipping_details">
+                <input type="hidden" name="Nombre_Cliente" id="f2_name">
+                <input type="hidden" name="RUT_Cliente" id="f2_rut">
+                <input type="hidden" name="Email_Cliente" id="f2_email">
+                <input type="hidden" name="Telefono_Principal" id="f2_phone">
+                <input type="hidden" name="Telefono_Adicional" id="f2_phone2">
+            </form>
+
+            <!-- Paso 1: Opción y Datos de Envío -->
+            <div class="checkout-section">
+                <div class="section-title">🚚 1. Opción y Datos de Envío</div>
+                
+                <label for="shippingMethod">Selecciona la opción de entrega:*</label>
+                <select id="shippingMethod" onchange="toggleShippingOptions()">
+                    <option value="Metro de Santiago">🚇 Opción 1: Entrega en Estación de Metro ($1.500)</option>
+                    <option value="Envío a Domicilio">🏠 Opción 2: Envío a Domicilio ($2.990)</option>
+                    <option value="Retiro en Sucursal">📍 Opción 3: Retiro en Sucursal (Gratis)</option>
+                </select>
+
+                <div id="metroFormSection">
+                    <label for="metroLine">Línea de Metro:*</label>
+                    <select id="metroLine">
+                        <option value="Línea 1 (Roja)">Línea 1 (Roja)</option>
+                        <option value="Línea 2 (Amarilla)">Línea 2 (Amarilla)</option>
+                        <option value="Línea 3 (Marrón)">Línea 3 (Marrón)</option>
+                        <option value="Línea 4 (Azul)">Línea 4 (Azul)</option>
+                        <option value="Línea 5 (Verde)">Línea 5 (Verde)</option>
+                        <option value="Línea 6 (Morada)">Línea 6 (Morada)</option>
+                    </select>
+
+                    <label for="metroStation">Estación Específica de Entrega:*</label>
+                    <input type="text" id="metroStation" placeholder="Ej: Los Leones / Baquedano">
+
+                    <label for="metroSchedule">Día y Horario de Entrega:*</label>
+                    <select id="metroSchedule">
+                        <option value="Sábado (Todo el día: 10:00 a 19:00 hrs)">📅 Sábado (Todo el día: 10:00 a 19:00 hrs)</option>
+                        <option value="Miércoles (A partir de las 17:00 hrs)">📅 Miércoles (A partir de las 17:00 hrs)</option>
+                        <option value="A convenir por WhatsApp">💬 A convenir hora exacta por WhatsApp</option>
+                    </select>
+
+                    <label for="metroNotes">Detalles de encuentro (Opcional):</label>
+                    <input type="text" id="metroNotes" placeholder="Ej: En torniquetes salida norte / Boletería">
+
+                    <div class="terms-box">
+                        <div class="terms-title">⚠️ Términos de Entrega en Metro:</div>
+                        <ul class="terms-list">
+                            <li><strong>Punto de encuentro:</strong> Dentro de la estación (zona de torniquetes/andenes). Por seguridad y logística, nuestros repartidores no tienen permitido salir a la superficie.</li>
+                            <li>Espera máxima en punto de encuentro: <strong>15 minutos</strong>.</li>
+                            <li>Reagendamiento permitido: <strong>Máximo 2 veces</strong>.</li>
+                            <li>En caso de no concretarse la entrega tras 2 intentos por inasistencia, el pedido se cancelará y se reembolsará el <strong>50% del total</strong> por costos logísticos y reserva de stock.</li>
+                        </ul>
+                        <label class="terms-checkbox-label">
+                            <input type="checkbox" id="acceptTermsMetro">
+                            Acepto los términos de entrega en Metro para agendar.
+                        </label>
+                    </div>
+                </div>
+
+                <div id="homeFormSection" style="display:none;">
+                    <label for="homeStreet">Calle y Número de Entrega:*</label>
+                    <input type="text" id="homeStreet" placeholder="Ej: Av. Providencia 1234">
+
+                    <label for="homeComuna">Comuna de Destino:*</label>
+                    <input type="text" id="homeComuna" placeholder="Ej: Providencia / Ñuñoa / Las Condes">
+
+                    <label for="homeDept">Depto / Casa / Bloque / Villa (Opcional):</label>
+                    <input type="text" id="homeDept" placeholder="Ej: Depto 502 / Casa B">
+
+                    <label for="homeNotes">Indicaciones para el repartidor (Opcional):</label>
+                    <input type="text" id="homeNotes" placeholder="Ej: Dejar en conserjería 24/7 / Timbre 2">
+
+                    <div class="info-box-pickup">
+                        📦 <strong>Información de Envío:</strong> Los datos ingresados se utilizarán para generar la orden de despacho con la empresa externa de transporte.
+                    </div>
+                </div>
+
+                <div id="pickupFormSection" style="display:none;">
+                    <label for="pickupLocation">Selecciona la sucursal de retiro:*</label>
+                    <select id="pickupLocation">
+                        <option value="Pasaje Alcalde Luis Navarro Avilés 1413, San Bernardo">🏬 Sucursal San Bernardo: Pasaje Alcalde Luis Navarro Avilés 1413</option>
+                        <option value="Colón 1377, Independencia, Santiago">🏬 Sucursal Independencia: Colón 1377, Santiago</option>
+                    </select>
+
+                    <label for="pickupDate">Día Estimado de Retiro:*</label>
+                    <input type="text" id="pickupDate" placeholder="Ej: Mañana por la tarde / Este Viernes">
+
+                    <div class="info-box-pickup">
+                        📍 <strong>Nota:</strong> Te notificaremos en cuanto tu planta esté lista y empacada en la tienda seleccionada.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Paso 2: Datos del Cliente -->
+            <div class="checkout-section">
+                <div class="section-title">👤 2. Datos del Cliente</div>
+                
+                <label for="clientName">Nombre Completo:*</label>
+                <input type="text" id="clientName" placeholder="Ej: Juan Pérez González">
+
+                <label for="clientRut">RUT:*</label>
+                <input type="text" id="clientRut" placeholder="Ej: 12.345.678-K">
+
+                <label for="clientEmail">Correo Electrónico:*</label>
+                <input type="email" id="clientEmail" placeholder="Ej: juan.perez@email.com">
+
+                <label for="clientPhone">Teléfono Principal:*</label>
+                <input type="text" id="clientPhone" placeholder="Ej: +569 1234 5678">
+
+                <label for="clientPhone2">Teléfono Adicional (Opcional):</label>
+                <input type="text" id="clientPhone2" placeholder="Ej: +569 8765 4321">
+            </div>
+
+            <!-- Paso 3: Selección de Medio de Pago -->
+            <div class="checkout-section">
+                <div class="section-title">💳 3. Medio de Pago</div>
+                
+                <label for="paymentMethod">Selecciona la forma de pago:*</label>
+                <select id="paymentMethod">
+                    <option value="Transferencia">💚 Opción Única: Transferencia Bancaria Directa</option>
+                </select>
+
+                <div id="transferPaymentSection">
+                    <div id="bankDetailsBox" class="bank-details">
+                        <div class="bank-header">
+                            <span>🏦 <strong>Datos para Transferir:</strong></span>
+                            <button class="btn-copy-all" onclick="copyAllBankDetails()">📋 Copiar Todo</button>
+                        </div>
+                        📌 <strong>Nombre:</strong> Alejandro Villar<br>
+                        📌 <strong>RUT:</strong> <span id="rutValue">20.974.017-6</span> <button class="btn-copy" onclick="copyToClipboard('20.974.017-6')">(Copiar)</button><br>
+                        📌 <strong>Banco:</strong> Banco Falabella<br>
+                        📌 <strong>Tipo de Cuenta:</strong> Cuenta Corriente<br>
+                        📌 <strong>N° de Cuenta:</strong> <span id="accountValue">19822076648</span> <button class="btn-copy" onclick="copyToClipboard('19822076648')">(Copiar)</button><br>
+                        📌 <strong>Email:</strong> alejandrojeremiasvillar@gmail.com
+                    </div>
+
+                    <div id="importantNoticeBox" class="important-notice">
+                        ⚠️ IMPORTANTE: Al transferir desde tu banco, escribe obligatoriamente tu Código de Compra en el campo 'Comentario', 'Asunto' o 'Mensaje'. No se procesarán pedidos que no incluyan este código verificado en la cartola bancaria.
+                    </div>
+                </div>
+            </div>
+
+            <button id="btnSubmitOrder" class="btn-whatsapp" onclick="processOrder()">Confirmar Pedido y Ver Datos de Pago</button>
+
+            <!-- RECUADRO CÓDIGO CON ETIQUETA "ASUNTO" -->
+            <div id="orderCodeBox" class="order-code-box">
+                Asunto (Código de Compra):
+                <div class="order-code-row">
+                    <span id="orderCodeDisplay" class="order-code-num">MB-000000</span>
+                    <button class="btn-copy-code" onclick="copyOrderCode()">📋 Copiar Asunto</button>
+                </div>
+            </div>
+
+            <div id="contactOptions" class="contact-options">
+                <div class="contact-title">Selecciona una línea para enviar el comprobante con tu código:</div>
+                <a id="btnNum1" href="#" target="_blank" class="btn-contact-num">💬 Enviar a Opción 1: +569 64548260</a>
+                <a id="btnNum2" href="#" target="_blank" class="btn-contact-num">💬 Enviar a Opción 2: +569 84120788</a>
+                
+                <p class="email-notice">Si lo prefieres, también puedes enviar tu comprobante a nuestro correo: <strong>alejandrojeremiasvillar@gmail.com</strong> indicando tu código en el asunto.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let cart = JSON.parse(localStorage.getItem('mb_cart')) || [];
+        let generatedOrderCode = "";
+        let currentShippingCost = 1500;
+
+        function renderCart() {
+            const cartItemsContainer = document.getElementById('cartItems');
+            const cartContent = document.getElementById('cartContent');
+
+            if (cart.length === 0) {
+                cartContent.innerHTML = `
+                    <div class="empty-cart">
+                        <p>Tu carrito está vacío 🌿</p>
+                        <br>
+                        <a href="index.html" class="btn-back" style="font-size:0.95rem; padding: 10px 20px;">Ir al Menú Principal</a>
+                    </div>
+                `;
+                return;
+            }
+
+            cartItemsContainer.innerHTML = '';
+            let subtotal = 0;
+
+            cart.forEach((item, index) => {
+                const itemPriceNum = parseInt(item.precio.replace(/[^0-9]/g, '')) || 0;
+                subtotal += itemPriceNum;
+
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'cart-item';
+                itemDiv.innerHTML = `
+                    <div>
+                        <div class="item-info">${item.nombre}</div>
+                        <div class="item-price">${item.precio}</div>
+                    </div>
+                    <button class="btn-remove" onclick="removeFromCart(${index})">Eliminar</button>
+                `;
+                cartItemsContainer.appendChild(itemDiv);
+            });
+
+            updateTotals(subtotal);
+        }
+
+        function updateTotals(subtotal) {
+            if (subtotal === undefined) {
+                subtotal = cart.reduce((acc, item) => acc + (parseInt(item.precio.replace(/[^0-9]/g, '')) || 0), 0);
+            }
+
+            const method = document.getElementById('shippingMethod').value;
+            const freeNotice = document.getElementById('freeShippingNotice');
+
+            if (method.includes('Metro')) {
+                if (subtotal >= 15000) {
+                    currentShippingCost = 0;
+                    freeNotice.innerHTML = "🎉 ¡Felicidades! Tienes <strong>ENVÍO GRATIS</strong> en Metro.";
+                } else {
+                    currentShippingCost = 1500;
+                    const diff = 15000 - subtotal;
+                    freeNotice.innerHTML = `💡 Te faltan <strong>$${diff.toLocaleString('es-CL')}</strong> para obtener <strong>Envío GRATIS</strong> en Metro.`;
+                }
+            } else if (method.includes('Domicilio')) {
+                currentShippingCost = 2990;
+                freeNotice.innerHTML = "🎉 ¡Envío GRATIS en Metro por compras sobre $15.000!";
+            } else {
+                currentShippingCost = 0;
+                freeNotice.innerHTML = "🎉 ¡Envío GRATIS en Metro por compras sobre $15.000!";
+            }
+
+            const total = subtotal + currentShippingCost;
+
+            document.getElementById('cartSubtotalSum').innerText = '$' + subtotal.toLocaleString('es-CL');
+            
+            if (method.includes('Metro')) {
+                document.getElementById('cartShippingSum').innerText = (currentShippingCost === 0) ? "$0 (¡GRATIS!)" : "$1.500";
+            } else if (method.includes('Domicilio')) {
+                document.getElementById('cartShippingSum').innerText = "$2.990";
+            } else {
+                document.getElementById('cartShippingSum').innerText = "$0 (Gratis)";
+            }
+
+            document.getElementById('cartTotalSum').innerText = '$' + total.toLocaleString('es-CL');
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            localStorage.setItem('mb_cart', JSON.stringify(cart));
+            renderCart();
+        }
+
+        function toggleShippingOptions() {
+            const method = document.getElementById('shippingMethod').value;
+            
+            const metroSection = document.getElementById('metroFormSection');
+            const homeSection = document.getElementById('homeFormSection');
+            const pickupSection = document.getElementById('pickupFormSection');
+
+            metroSection.style.display = 'none';
+            homeSection.style.display = 'none';
+            pickupSection.style.display = 'none';
+
+            if (method.includes('Metro')) {
+                metroSection.style.display = 'block';
+            } else if (method.includes('Domicilio')) {
+                homeSection.style.display = 'block';
+            } else if (method.includes('Sucursal')) {
+                pickupSection.style.display = 'block';
+            }
+
+            updateTotals();
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert(`¡Copiado al portapapeles: ${text}!`);
+            }).catch(err => {
+                console.error('Error al copiar: ', err);
+            });
+        }
+
+        function copyOrderCode() {
+            if (!generatedOrderCode) return;
+            navigator.clipboard.writeText(generatedOrderCode).then(() => {
+                alert(`¡Asunto de compra copiado: ${generatedOrderCode}! 📋`);
+            }).catch(err => {
+                console.error('Error al copiar el asunto: ', err);
+            });
+        }
+
+        function copyAllBankDetails() {
+            const fullBankText = `Nombre: Alejandro Villar
+RUT: 20.974.017-6
+Banco: Banco Falabella
+Tipo de Cuenta: Cuenta Corriente
+N° de Cuenta: 19822076648
+Correo: alejandrojeremiasvillar@gmail.com
+Asunto: ${generatedOrderCode || 'MB-XXXXXX'}`;
+
+            navigator.clipboard.writeText(fullBankText).then(() => {
+                alert("¡Datos de transferencia y asunto copiados con éxito! 📋");
+            }).catch(err => {
+                console.error('Error al copiar todo: ', err);
+            });
+        }
+
+        function sendSilentEmailBackup(orderData) {
+            document.getElementById('f1_subject').value = `Nuevo Pedido ${orderData.code} - ${orderData.clientName}`;
+            document.getElementById('f1_code').value = orderData.code;
+            document.getElementById('f1_products').value = orderData.productsText;
+            document.getElementById('f1_total').value = orderData.totalFormatted;
+            document.getElementById('f1_shipping_method').value = orderData.shippingMethod;
+            document.getElementById('f1_shipping_details').value = orderData.deliveryText;
+            document.getElementById('f1_name').value = orderData.clientName;
+            document.getElementById('f1_rut').value = orderData.clientRut;
+            document.getElementById('f1_email').value = orderData.clientEmail;
+            document.getElementById('f1_phone').value = orderData.clientPhone;
+            document.getElementById('f1_phone2').value = orderData.clientPhone2 || 'N/A';
+
+            document.getElementById('f2_subject').value = `Nuevo Pedido ${orderData.code} - ${orderData.clientName}`;
+            document.getElementById('f2_code').value = orderData.code;
+            document.getElementById('f2_products').value = orderData.productsText;
+            document.getElementById('f2_total').value = orderData.totalFormatted;
+            document.getElementById('f2_shipping_method').value = orderData.shippingMethod;
+            document.getElementById('f2_shipping_details').value = orderData.deliveryText;
+            document.getElementById('f2_name').value = orderData.clientName;
+            document.getElementById('f2_rut').value = orderData.clientRut;
+            document.getElementById('f2_email').value = orderData.clientEmail;
+            document.getElementById('f2_phone').value = orderData.clientPhone;
+            document.getElementById('f2_phone2').value = orderData.clientPhone2 || 'N/A';
+
+            const form1 = document.getElementById('emailForm1');
+            const form2 = document.getElementById('emailForm2');
+
+            fetch(form1.action, {
+                method: 'POST',
+                body: new FormData(form1)
+            }).catch(err => console.error("Error al enviar respaldo 1:", err));
+
+            fetch(form2.action, {
+                method: 'POST',
+                body: new FormData(form2)
+            }).catch(err => console.error("Error al enviar respaldo 2:", err));
+        }
+
+        function processOrder() {
+            if (cart.length === 0) return;
+
+            const name = document.getElementById('clientName').value.trim();
+            const rut = document.getElementById('clientRut').value.trim();
+            const email = document.getElementById('clientEmail').value.trim();
+            const phone = document.getElementById('clientPhone').value.trim();
+            const phone2 = document.getElementById('clientPhone2').value.trim();
+            const shippingMethod = document.getElementById('shippingMethod').value;
+
+            if (!name || !rut || !email || !phone) {
+                alert("Por favor completa los campos obligatorios del cliente (*): Nombre, RUT, Correo Electrónico y Teléfono.");
+                return;
+            }
+
+            let deliveryText = "";
+
+            if (shippingMethod.includes('Metro')) {
+                const metroLine = document.getElementById('metroLine').value;
+                const metroStation = document.getElementById('metroStation').value.trim();
+                const metroSchedule = document.getElementById('metroSchedule').value;
+                const metroNotes = document.getElementById('metroNotes').value.trim();
+                const acceptedTerms = document.getElementById('acceptTermsMetro').checked;
+
+                if (!metroStation) {
+                    alert("Por favor ingresa la Estación de Metro de entrega.");
+                    return;
+                }
+
+                if (!acceptedTerms) {
+                    alert("Para agendar una entrega en Metro debes aceptar los términos marcando la casilla.");
+                    return;
+                }
+
+                const shippingLabel = (currentShippingCost === 0) ? "(Envío GRATIS)" : "(+$1.500)";
+                deliveryText = `Línea: ${metroLine} | Estación: ${metroStation} | Horario: ${metroSchedule}` + (metroNotes ? ` | Notas: ${metroNotes}` : '');
+
+            } else if (shippingMethod.includes('Domicilio')) {
+                const street = document.getElementById('homeStreet').value.trim();
+                const comuna = document.getElementById('homeComuna').value.trim();
+                const dept = document.getElementById('homeDept').value.trim();
+                const notes = document.getElementById('homeNotes').value.trim();
+
+                if (!street || !comuna) {
+                    alert("Por favor ingresa la Dirección (Calle y Número) y Comuna de destino.");
+                    return;
+                }
+
+                deliveryText = `Dirección: ${street}` + (dept ? `, ${dept}` : '') + ` | Comuna: ${comuna}` + (notes ? ` | Notas: ${notes}` : '');
+
+            } else if (shippingMethod.includes('Sucursal')) {
+                const pickupLocation = document.getElementById('pickupLocation').value;
+                const pickupDate = document.getElementById('pickupDate').value.trim();
+
+                if (!pickupDate) {
+                    alert("Por favor indica el Día Estimado de Retiro.");
+                    return;
+                }
+
+                deliveryText = `Sucursal: ${pickupLocation} | Fecha Estimada: ${pickupDate}`;
+            }
+
+            if (!generatedOrderCode) {
+                const randomNum = Math.floor(100000 + Math.random() * 900000);
+                generatedOrderCode = `MB-${randomNum}`;
+            }
+
+            document.getElementById('orderCodeDisplay').innerText = generatedOrderCode;
+            document.getElementById('orderCodeBox').style.display = 'block';
+
+            document.getElementById('bankDetailsBox').style.display = 'block';
+            document.getElementById('importantNoticeBox').style.display = 'block';
+
+            let subtotal = 0;
+            let itemsText = '';
+            cart.forEach(item => {
+                itemsText += `• ${item.nombre} (${item.precio})\n`;
+                subtotal += parseInt(item.precio.replace(/[^0-9]/g, '')) || 0;
+            });
+
+            const grandTotal = subtotal + currentShippingCost;
+            const formattedTotal = '$' + grandTotal.toLocaleString('es-CL');
+            let phone2Text = phone2 ? `\n• *Contacto Adicional:* ${phone2}` : '';
+            const shippingLine = (currentShippingCost === 0 && shippingMethod.includes('Metro')) ? '¡GRATIS!' : '$' + currentShippingCost.toLocaleString('es-CL');
+
+            sendSilentEmailBackup({
+                code: generatedOrderCode,
+                clientName: name,
+                clientRut: rut,
+                clientEmail: email,
+                clientPhone: phone,
+                clientPhone2: phone2,
+                productsText: itemsText,
+                totalFormatted: formattedTotal,
+                shippingMethod: shippingMethod,
+                deliveryText: deliveryText
+            });
+
+            const message = `¡Hola Mundo Brote! 🌿
+Adjunto el comprobante de transferencia para validar mi compra.
+
+🆔 *Asunto / Código de Pedido:* ${generatedOrderCode}
+
+📋 *Detalle del Pedido:*
+${itemsText}
+💰 *Subtotal Productos:* $${subtotal.toLocaleString('es-CL')}
+🚚 *Envío:* ${shippingLine}
+💵 *Total Transferido:* ${formattedTotal}
+
+📍 *Datos de Entrega:*
+${deliveryText}
+
+👤 *Datos del Cliente:*
+• *Nombre:* ${name}
+• *RUT:* ${rut}
+• *Email:* ${email}
+• *Teléfono Principal:* ${phone}${phone2Text}
+
+*(Te adjunto la foto del comprobante de transferencia a continuación)*`;
+
+            const encodedMessage = encodeURIComponent(message);
+
+            document.getElementById('btnNum1').href = `https://wa.me/56964548260?text=${encodedMessage}`;
+            document.getElementById('btnNum2').href = `https://wa.me/56984120788?text=${encodedMessage}`;
+
+            document.getElementById('contactOptions').style.display = 'flex';
+
+            const btnSubmit = document.getElementById('btnSubmitOrder');
+            btnSubmit.innerText = "✓ Pedido Registrado con Éxito";
+            btnSubmit.disabled = true;
+        }
+
+        renderCart();
+    </script>
+</body>
+</html>
