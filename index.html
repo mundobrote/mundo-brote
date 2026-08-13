@@ -471,7 +471,6 @@
             width: 100%; 
             height: 100%; 
             object-fit: cover; 
-            object-position: center;
             display: block; 
             border-radius: 14px; 
         }
@@ -783,7 +782,7 @@
             <span class="close-btn" onclick="closeModal()">&times;</span>
             
             <div class="modal-left">
-                <img id="modalImg" src="fondo.jpg" class="modal-img" alt="Foto Real">
+                <img id="modalImg" src="fondo.jpg" class="modal-img imagen-modal-brote" alt="Foto Real" onclick="ampliarFoto(this.src)">
             </div>
 
             <div class="modal-right">
@@ -797,7 +796,7 @@
                     <div id="growBox" class="toggle-box">
                         <p style="margin-bottom:8px;">Así lucirá desarrollada:</p>
                         <div class="ref-img-container">
-                            <img id="refImg" src="fondo.jpg" class="ref-img" alt="Referencia">
+                            <img id="refImg" src="fondo.jpg" class="ref-img imagen-modal-brote" alt="Referencia" onclick="ampliarFoto(this.src)">
                             <span class="ref-badge">⚠️ Imagen de referencia</span>
                         </div>
                     </div>
@@ -1019,7 +1018,7 @@
                 categoria: "flor",
                 precio: "$1.200",
                 foto: "flores/orejasdeoso.jpg",
-                fotoGrande: "flores/orejasneosogrande.jpg",
+                fotoGrande: "flores/orejasdeosogrande.jpg",
                 cuidados: "📊 Dificultad: Baja a Media ⭐⭐☆☆☆\n\n☀️ Luz: Pleno sol a semisombra muy clara.\n💧 Agua: Riego moderado a bajo. Deja secar la tierra entre riegos.\n⚠️ Precaución: Propensa al oídio (hongo blanco) si se mojan las hojas. Riega siempre directo al sustrato."
             },
             {
@@ -1330,5 +1329,34 @@
         fetchStockAndRender();
         showView('home');
     </script>
+
+<!-- VISOR DE FOTO COMPLETA (LIGHTBOX) -->
+<style>
+  .imagen-modal-brote {
+    cursor: zoom-in;
+    transition: transform 0.2s ease;
+  }
+  .imagen-modal-brote:hover {
+    filter: brightness(0.9);
+  }
+</style>
+
+<div id="foto-modal-completa" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 10000; justify-content: center; align-items: center; cursor: zoom-out;" onclick="cerrarFoto()">
+  <img id="img-ampliada" src="" alt="Planta Ampliada" style="max-width: 92%; max-height: 92%; object-fit: contain; border-radius: 12px; box-shadow: 0px 4px 20px rgba(0,0,0,0.5);">
+  <span style="position: absolute; top: 20px; right: 30px; color: white; font-size: 35px; font-family: sans-serif; cursor: pointer;">&times;</span>
+</div>
+
+<script>
+  function ampliarFoto(urlImagen) {
+    const modalFoto = document.getElementById('foto-modal-completa');
+    const imgAmpliada = document.getElementById('img-ampliada');
+    imgAmpliada.src = urlImagen;
+    modalFoto.style.display = 'flex';
+  }
+  function cerrarFoto() {
+    const modalFoto = document.getElementById('foto-modal-completa');
+    modalFoto.style.display = 'none';
+  }
+</script>
 </body>
 </html>
