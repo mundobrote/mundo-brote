@@ -1,103 +1,86 @@
-import { google } from 'googleapis'; // Necesitaremos la librería oficial de Google
+import { google } from 'googleapis';
 
 export default async function handler(req, res) {
-    // 1. Validar que la petición sea POST (seguridad)
     if (req.method !== 'POST') {
-        return res.status(405).json({ success: false, message: 'Método no permitido' });
+        return res.status(405).json({ message: 'Método no permitido' });
     }
 
     try {
-        const { carrito } = req.body; // Recibe el array del carrito [{id: "PRIM-FUC", cantidad: 2}, ...]
-        
-        // 2. Conectar de forma segura con Google Sheets usando Variables de Entorno (env)
+        const { items, metodoEnvio, cliente } = req.body;
+
+        // Configurar credenciales de Google Sheets usando variables de entorno
         const auth = new google.auth.GoogleAuth({
-            credentials: JSON.parse(process.env.GOOGLE_CREDENTIALS),
+            credentials: {
+                client_email: process.env.GOOGLE_CLIENT_EMAIL,
+                private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+            },
             scopes: ['https://www.googleapis.com/auth/spreadsheets'],
         });
-        const sheets = google.sheets({ version: 'v4', auth });
-        const spreadsheetId = process.env.GOOGLE_SHEET_ID;
 
-        // 3. Traer los datos actuales del inventario de tu "Cerebro"
+        const sheets = google.sheets({ version: 'v4', auth });
+        const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID;
+
+        // Leer datos de la "Hoja 2" (Rango A:G completo)
         const response = await sheets.spreadsheets.values.get({
             spreadsheetId,
-            range: 'Inventario!A2:G100', // Asumiendo que tu pestaña se llama Inventario
+            range: 'Hoja 2!A:G',
         });
-        const filas = response.data.values;
 
-        if (!filas || filas.length === 0) {
-            return res.status(500).json({ success: false, message: 'No se encontraron productos en el inventario.' });
+        const rows = response.data.values;
+        if (!rows || rows.length === 0) {
+            throw new Error("No se encontraron datos en la Hoja 2.");
         }
 
-        let totalConfirmado = 0;
-        let erroresStock = [];
-        let actualizacionesStock = []; // Para guardar qué filas debemos modificar después
+        // Analizar cada ítem enviado por el carrito
+        for (const item of items) {
+            // Buscamos coincidencia exacta de Nombre (Columna A) y Color/Variante (Columna B)
+            const filaProducto = rows.find(row => 
+                row[0]?.trim().toLowerCase() === item.nombre?.trim().toLowerCase() &&
+                row[1]?.trim().toLowerCase() === item.variante?.trim().toLowerCase()
+            );
 
-        // 4. Bucle Pro: Validar Stock y Precio de cada item enviado en el carrito
-        for (const item of carrito) {
-            // Buscar el producto en las filas de Google Sheets por su ID (Columna A = índice 0)
-            const indiceFila = filas.findIndex(f => f[0] === item.id);
-            
-            if (indiceFila === -1) {
-                erroresStock.push(`El producto con ID ${item.id} no existe.`);
-                continue;
+            if (!filaProducto) {
+                return res.status(400).json({ 
+                    message: `El producto o la variante "${item.nombre} (${item.variante})" no se encuentra en el inventario.` 
+                });
             }
 
-            const filaProducto = filas[indiceFila];
-            const nombrePlanta = filaProducto[1];
-            const precioReal = parseInt(filaProducto[4]); // Columna E = Precio
-            const stockReal = parseInt(filaProducto[5]);  // Columna F = Stock
+            // Según el nuevo orden: Columna D es cantidad, Columna E es Estado, Columna G es DISPONIBLES
+            const estado = filaProducto[4]?.trim().toLowerCase(); // Columna E (Índice 4)
+            const disponibles = parseInt(filaProducto[6]) || 0;    // Columna G (Índice 6)
 
-            // ¡Freno de mano! Validar si hay stock suficiente
-            if (stockReal < item.cantidad) {
-                erroresStock.push(`Lo sentimos, solo quedan ${stockReal} unidades de ${nombrePlanta}.`);
-            } else {
-                // Si hay stock, calculamos el total con el precio REAL del servidor (anti-hackeos)
-                totalConfirmado += precioReal * item.cantidad;
-                
-                // Calculamos el nuevo stock restante
-                const nuevoStock = stockReal - item.cantidad;
-                
-                // Guardamos los datos para actualizar la celda correcta en Google Sheets (La fila en Excel es indiceFila + 2 por el encabezado)
-                actualizacionesStock.push({
-                    range: `Inventario!F${indiceFila + 2}`, // Columna F es Stock
-                    values: [[nuevoStock]]
+            if (estado !== 'disponible' || disponibles <= 0) {
+                return res.status(400).json({ 
+                    message: `Lo sentimos, "${item.nombre} (${item.variante})" se encuentra agotado actualmente.` 
                 });
             }
         }
 
-        // 5. Si hubo errores de stock, frenamos la compra aquí y avisamos al cliente
-        if (erroresStock.length > 0) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Problemas con el inventario', 
-                errores: erroresStock 
-            });
-        }
+        // Si todo está correcto y hay stock, generamos el código único de pedido
+        const codigoPedido = `MB-${Math.floor(100000 + Math.random() * 900000)}`;
 
-        // 6. Si todo está perfecto, aplicamos el "Congelador de Stock" en Google Sheets
-        await sheets.spreadsheets.values.batchUpdate({
-            spreadsheetId,
-            requestBody: {
-                data: actualizacionesStock,
-                valueInputOption: 'USER_ENTERED'
-            }
-        });
+        // Cálculos de montos por contingencia (Subtotal y totales reales)
+        // Puedes enriquecer este cálculo si integras precios dinámicos desde la hoja
+        let subtotal = 0;
+        // Simulación o mapeo estándar local
+        subtotal = items.length * 5000; // Valor base ilustrativo por planta en backend
 
-        // 7. Generar el ID de Pedido Único (ej: #MB-7492)
-        const idPedido = `MB-${Math.floor(1000 + Math.random() * 9000)}`;
+        let costoEnvio = 1500;
+        if (metodoEnvio.includes('Metro') && subtotal >= 15000) costoEnvio = 0;
+        if (metodoEnvio.includes('Domicilio')) costoEnvio = 3500;
+        if (metodoEnvio.includes('Sucursal')) costoEnvio = 0;
 
-        // (Opcional) Aquí podrías también guardar el historial del pedido en otra pestaña de Google Sheets si quisieras
+        const totalFinal = subtotal + costoEnvio;
 
-        // 8. Responder con el éxito rotundo al Frontend
         return res.status(200).json({
-            success: true,
-            idPedido,
-            total: totalConfirmado,
-            message: 'Stock reservado y monto confirmado con éxito.'
+            codigoPedido,
+            subtotal,
+            costoEnvio,
+            totalFinal
         });
 
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ success: false, message: 'Error interno en el servidor cerebro.' });
+        console.error("Error en API Serverless:", error);
+        return res.status(500).json({ message: 'Error interno del servidor', error: error.message });
     }
 }
