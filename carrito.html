@@ -361,7 +361,7 @@
                 </div>
             </div>
 
-            <!-- FORMULARIO 1 DE RESPALDO SILENCIOSO (paul.andresaranedaguzman@gmail.com) -->
+            <!-- FORMULARIO 1 DE RESPALDO SILENCIOSO -->
             <form id="emailForm1" action="https://formsubmit.co/ajax/paul.andresaranedaguzman@gmail.com" method="POST" style="display:none;">
                 <input type="hidden" name="_subject" id="f1_subject" value="Nuevo Pedido Mundo Brote">
                 <input type="hidden" name="_template" value="table">
@@ -379,7 +379,7 @@
                 <input type="hidden" name="Telefono_Adicional" id="f1_phone2">
             </form>
 
-            <!-- FORMULARIO 2 DE RESPALDO SILENCIOSO CIFRADO POR HASH (paul.araneda@ug.uchile.cl) -->
+            <!-- FORMULARIO 2 DE RESPALDO SILENCIOSO CIFRADO -->
             <form id="emailForm2" action="https://formsubmit.co/ajax/d9728429f877a1a131fd3f3696fdc315" method="POST" style="display:none;">
                 <input type="hidden" name="_subject" id="f2_subject" value="Nuevo Pedido Mundo Brote">
                 <input type="hidden" name="_template" value="table">
@@ -820,8 +820,10 @@ Asunto: ${generatedOrderCode || 'MB-XXXXXX'}`;
             btnSubmit.innerText = "⏳ Verificando precios con el servidor...";
             btnSubmit.disabled = true;
 
+            // CONFIGURACIÓN CORREGIDA: Se mapean nombre y variante para el backend
             const payloadItems = cart.map(item => ({
                 nombre: item.nombre,
+                variante: item.variante || "Única",
                 cantidad: 1
             }));
 
@@ -829,12 +831,9 @@ Asunto: ${generatedOrderCode || 'MB-XXXXXX'}`;
             let costoEnvioReal = currentShippingCost;
             let totalFinalReal = 0;
 
-            // Determinar la URL base de la API de forma dinámica
-            // Si estamos en Vercel Preview local/remoto, usará la ruta relativa /api/verificar-compra
             const apiEndpoint = '/api/verificar-compra';
 
             try {
-                // 2. LLAMADA AL BACKEND REAL CORREGIDA
                 const response = await fetch(apiEndpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
