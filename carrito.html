@@ -640,7 +640,6 @@
             if (cart.length === 0) {
                 renderCart();
             } else {
-                // Actualiza solo la lista y los totales para no borrar los datos ya escritos en los campos de texto
                 const cartItemsContainer = document.getElementById('cartItems');
                 cartItemsContainer.innerHTML = '';
                 let subtotal = 0;
@@ -821,7 +820,6 @@ Asunto: ${generatedOrderCode || 'MB-XXXXXX'}`;
             btnSubmit.innerText = "⏳ Verificando precios con el servidor...";
             btnSubmit.disabled = true;
 
-            // 1. PREPARAR ITEMS PARA EL SERVIDOR (SOLO NOMBRES Y CANTIDAD, SIN PRECIOS)
             const payloadItems = cart.map(item => ({
                 nombre: item.nombre,
                 cantidad: 1
@@ -831,14 +829,25 @@ Asunto: ${generatedOrderCode || 'MB-XXXXXX'}`;
             let costoEnvioReal = currentShippingCost;
             let totalFinalReal = 0;
 
+            // Determinar la URL base de la API de forma dinámica
+            // Si estamos en Vercel Preview local/remoto, usará la ruta relativa /api/verificar-compra
+            const apiEndpoint = '/api/verificar-compra';
+
             try {
-                // 2. LLAMADA AL BACKEND SEGURO
-                const response = await fetch('/api/crear-orden', {
+                // 2. LLAMADA AL BACKEND REAL CORREGIDA
+                const response = await fetch(apiEndpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         items: payloadItems,
-                        metodoEnvio: shippingMethod
+                        metodoEnvio: shippingMethod,
+                        cliente: {
+                            nombre: name,
+                            rut: rut,
+                            email: email,
+                            telefono: phone,
+                            detallesEntrega: deliveryText
+                        }
                     })
                 });
 
@@ -853,7 +862,6 @@ Asunto: ${generatedOrderCode || 'MB-XXXXXX'}`;
                 }
             } catch (err) {
                 console.warn("Ejecutando cálculo local de contingencia:", err);
-                // Contingencia en caso de pruebas sin backend levantado
                 if (!generatedOrderCode) {
                     generatedOrderCode = `MB-${Math.floor(100000 + Math.random() * 900000)}`;
                 }
@@ -877,7 +885,6 @@ Asunto: ${generatedOrderCode || 'MB-XXXXXX'}`;
             let phone2Text = phone2 ? `\n• *Contacto Adicional:* ${phone2}` : '';
             const shippingLine = (costoEnvioReal === 0 && shippingMethod.includes('Metro')) ? '¡GRATIS!' : '$' + costoEnvioReal.toLocaleString('es-CL');
 
-            // Actualizar vista del resumen con montos del servidor
             document.getElementById('cartSubtotalSum').innerText = '$' + subtotalReal.toLocaleString('es-CL');
             document.getElementById('cartShippingSum').innerText = (costoEnvioReal === 0) ? "$0 (¡GRATIS!)" : '$' + costoEnvioReal.toLocaleString('es-CL');
             document.getElementById('cartTotalSum').innerText = formattedTotal;
