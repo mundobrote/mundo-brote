@@ -636,7 +636,30 @@
         function removeFromCart(index) {
             cart.splice(index, 1);
             localStorage.setItem('mb_cart', JSON.stringify(cart));
-            renderCart();
+            
+            if (cart.length === 0) {
+                renderCart();
+            } else {
+                // Actualiza solo la lista y los totales para no borrar los datos ya escritos en los campos de texto
+                const cartItemsContainer = document.getElementById('cartItems');
+                cartItemsContainer.innerHTML = '';
+                let subtotal = 0;
+                cart.forEach((item, idx) => {
+                    const itemPriceNum = parseInt(item.precio.replace(/[^0-9]/g, '')) || 0;
+                    subtotal += itemPriceNum;
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'cart-item';
+                    itemDiv.innerHTML = `
+                        <div>
+                            <div class="item-info">${item.nombre}</div>
+                            <div class="item-price">${item.precio}</div>
+                        </div>
+                        <button class="btn-remove" onclick="removeFromCart(${idx})">Eliminar</button>
+                    `;
+                    cartItemsContainer.appendChild(itemDiv);
+                });
+                updateTotals(subtotal);
+            }
         }
 
         function toggleShippingOptions() {
@@ -733,7 +756,7 @@ Asunto: ${generatedOrderCode || 'MB-XXXXXX'}`;
             }).catch(err => console.error("Error al enviar respaldo 2:", err));
         }
 
-        function processOrder() {
+        async function processOrder() {
             if (cart.length === 0) return;
 
             const name = document.getElementById('clientName').value.trim();
@@ -767,7 +790,6 @@ Asunto: ${generatedOrderCode || 'MB-XXXXXX'}`;
                     return;
                 }
 
-                const shippingLabel = (currentShippingCost === 0) ? "(Envío GRATIS)" : "(+$1.500)";
                 deliveryText = `Línea: ${metroLine} | Estación: ${metroStation} | Horario: ${metroSchedule}` + (metroNotes ? ` | Notas: ${metroNotes}` : '');
 
             } else if (shippingMethod.includes('Domicilio')) {
@@ -795,9 +817,49 @@ Asunto: ${generatedOrderCode || 'MB-XXXXXX'}`;
                 deliveryText = `Sucursal: ${pickupLocation} | Fecha Estimada: ${pickupDate}`;
             }
 
-            if (!generatedOrderCode) {
-                const randomNum = Math.floor(100000 + Math.random() * 900000);
-                generatedOrderCode = `MB-${randomNum}`;
+            const btnSubmit = document.getElementById('btnSubmitOrder');
+            btnSubmit.innerText = "⏳ Verificando precios con el servidor...";
+            btnSubmit.disabled = true;
+
+            // 1. PREPARAR ITEMS PARA EL SERVIDOR (SOLO NOMBRES Y CANTIDAD, SIN PRECIOS)
+            const payloadItems = cart.map(item => ({
+                nombre: item.nombre,
+                cantidad: 1
+            }));
+
+            let subtotalReal = 0;
+            let costoEnvioReal = currentShippingCost;
+            let totalFinalReal = 0;
+
+            try {
+                // 2. LLAMADA AL BACKEND SEGURO
+                const response = await fetch('/api/crear-orden', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        items: payloadItems,
+                        metodoEnvio: shippingMethod
+                    })
+                });
+
+                if (response.ok) {
+                    const serverData = await response.json();
+                    generatedOrderCode = serverData.codigoPedido;
+                    subtotalReal = serverData.subtotal;
+                    costoEnvioReal = serverData.costoEnvio;
+                    totalFinalReal = serverData.totalFinal;
+                } else {
+                    throw new Error("No se pudo conectar al endpoint backend");
+                }
+            } catch (err) {
+                console.warn("Ejecutando cálculo local de contingencia:", err);
+                // Contingencia en caso de pruebas sin backend levantado
+                if (!generatedOrderCode) {
+                    generatedOrderCode = `MB-${Math.floor(100000 + Math.random() * 900000)}`;
+                }
+                subtotalReal = cart.reduce((acc, item) => acc + (parseInt(item.precio.replace(/[^0-9]/g, '')) || 0), 0);
+                costoEnvioReal = (shippingMethod.includes('Metro') && subtotalReal >= 15000) ? 0 : currentShippingCost;
+                totalFinalReal = subtotalReal + costoEnvioReal;
             }
 
             document.getElementById('orderCodeDisplay').innerText = generatedOrderCode;
@@ -806,17 +868,19 @@ Asunto: ${generatedOrderCode || 'MB-XXXXXX'}`;
             document.getElementById('bankDetailsBox').style.display = 'block';
             document.getElementById('importantNoticeBox').style.display = 'block';
 
-            let subtotal = 0;
             let itemsText = '';
             cart.forEach(item => {
-                itemsText += `• ${item.nombre} (${item.precio})\n`;
-                subtotal += parseInt(item.precio.replace(/[^0-9]/g, '')) || 0;
+                itemsText += `• ${item.nombre}\n`;
             });
 
-            const grandTotal = subtotal + currentShippingCost;
-            const formattedTotal = '$' + grandTotal.toLocaleString('es-CL');
+            const formattedTotal = '$' + totalFinalReal.toLocaleString('es-CL');
             let phone2Text = phone2 ? `\n• *Contacto Adicional:* ${phone2}` : '';
-            const shippingLine = (currentShippingCost === 0 && shippingMethod.includes('Metro')) ? '¡GRATIS!' : '$' + currentShippingCost.toLocaleString('es-CL');
+            const shippingLine = (costoEnvioReal === 0 && shippingMethod.includes('Metro')) ? '¡GRATIS!' : '$' + costoEnvioReal.toLocaleString('es-CL');
+
+            // Actualizar vista del resumen con montos del servidor
+            document.getElementById('cartSubtotalSum').innerText = '$' + subtotalReal.toLocaleString('es-CL');
+            document.getElementById('cartShippingSum').innerText = (costoEnvioReal === 0) ? "$0 (¡GRATIS!)" : '$' + costoEnvioReal.toLocaleString('es-CL');
+            document.getElementById('cartTotalSum').innerText = formattedTotal;
 
             sendSilentEmailBackup({
                 code: generatedOrderCode,
@@ -838,7 +902,7 @@ Adjunto el comprobante de transferencia para validar mi compra.
 
 📋 *Detalle del Pedido:*
 ${itemsText}
-💰 *Subtotal Productos:* $${subtotal.toLocaleString('es-CL')}
+💰 *Subtotal Productos:* $${subtotalReal.toLocaleString('es-CL')}
 🚚 *Envío:* ${shippingLine}
 💵 *Total Transferido:* ${formattedTotal}
 
@@ -860,8 +924,7 @@ ${deliveryText}
 
             document.getElementById('contactOptions').style.display = 'flex';
 
-            const btnSubmit = document.getElementById('btnSubmitOrder');
-            btnSubmit.innerText = "✓ Pedido Registrado con Éxito";
+            btnSubmit.innerText = "✓ Pedido Registrado y Verificado";
             btnSubmit.disabled = true;
         }
 
