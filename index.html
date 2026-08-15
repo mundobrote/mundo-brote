@@ -88,8 +88,123 @@
             color: #b3b3b3;
             line-height: 1.6;
             max-width: 600px;
-            margin: 0 auto 30px auto;
+            margin: 0 auto 25px auto;
             padding: 0 10px;
+        }
+
+        /* BARRA DE BÚSQUEDA Y FILTROS */
+        .search-filter-container {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            max-width: 750px;
+            margin: 0 auto 30px auto;
+            background: rgba(26, 31, 28, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 12px 18px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .search-box-wrapper {
+            position: relative;
+            flex: 1;
+            min-width: 220px;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            font-size: 0.95rem;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 10px 36px 10px 38px;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 50px;
+            color: #ffffff;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+
+        #searchInput:focus {
+            border-color: #4ade80;
+            background: rgba(0, 0, 0, 0.55);
+        }
+
+        .btn-clear-search {
+            position: absolute;
+            right: 12px;
+            background: transparent;
+            border: none;
+            color: #9e9e9e;
+            font-size: 0.9rem;
+            cursor: pointer;
+            padding: 4px;
+        }
+        .btn-clear-search:hover { color: #ffffff; }
+
+        .price-filter-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .price-filter-wrapper label {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #81c784;
+        }
+
+        #priceFilterSelect {
+            padding: 10px 14px;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 50px;
+            color: #ffffff;
+            font-size: 0.88rem;
+            outline: none;
+            cursor: pointer;
+        }
+        #priceFilterSelect:focus { border-color: #4ade80; }
+        #priceFilterSelect option { background: #1a1f1c; color: #ffffff; }
+
+        /* SECCIÓN RESULTADOS DE BÚSQUEDA */
+        .search-results-section {
+            margin-bottom: 35px;
+            text-align: left;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            padding-bottom: 8px;
+        }
+
+        .results-header h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .results-count {
+            font-size: 0.85rem;
+            color: #81c784;
+            font-weight: 600;
         }
 
         .cat-title {
@@ -802,7 +917,8 @@
         @media (max-width: 768px) {
             .container { width: 100%; padding: 0 10px; }
             .home-title { font-size: 1.9rem; }
-            .home-subtitle { font-size: 0.88rem; margin-bottom: 25px; }
+            .home-subtitle { font-size: 0.88rem; margin-bottom: 20px; }
+            .search-filter-container { padding: 10px 14px; margin-bottom: 25px; }
 
             .carrusel-categorias {
                 justify-content: flex-start;
@@ -864,6 +980,35 @@
             <p class="home-subtitle">
                 Bienvenidos, brotecitos. Preparamos esta selección especial para ayudarte a elegir el próximo brote que transformará tus espacios en un hermoso refugio natural y te acompañará para que nunca estés solo.
             </p>
+
+            <!-- BARRA DE BÚSQUEDA Y FILTRO DE PRECIOS -->
+            <div class="search-filter-container">
+                <div class="search-box-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" placeholder="Buscar planta (ej: Ficus, Violeta, Suculenta)..." oninput="applyFilters()">
+                    <button id="btnClearSearch" class="btn-clear-search" onclick="clearFilters()" style="display:none;">✕</button>
+                </div>
+
+                <div class="price-filter-wrapper">
+                    <label for="priceFilterSelect">💰 Precio:</label>
+                    <select id="priceFilterSelect" onchange="applyFilters()">
+                        <option value="all">Todos</option>
+                        <option value="0-3000">Hasta $3.000</option>
+                        <option value="3001-6000">$3.000 a $6.000</option>
+                        <option value="6001-10000">$6.000 a $10.000</option>
+                        <option value="10001-999999">Más de $10.000</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- CONTENEDOR DE RESULTADOS DE BÚSQUEDA -->
+            <div id="searchResultsSection" class="search-results-section" style="display: none;">
+                <div class="results-header">
+                    <h2 id="searchResultsTitle">🌿 Resultados de la búsqueda</h2>
+                    <span id="searchResultsCount" class="results-count">0 encontrados</span>
+                </div>
+                <div class="plant-grid" id="list-search-results"></div>
+            </div>
 
             <!-- CARRUSEL SLIDER DE CATEGORÍAS VERTICALES -->
             <div class="carrusel-categorias">
@@ -968,29 +1113,29 @@
                 <div class="mb-social-links">
                     <a href="https://www.instagram.com/mundo.brote" target="_blank" class="mb-social-btn mb-ig">
                         <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-                        Instagram
-                    </a>
-                    <a href="https://www.tiktok.com/@mundo.brote" target="_blank" class="mb-social-btn mb-tt">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298-.002.595.042.88.13V9.4a6.33 6.33 0 0 0-1-.08A6.34 6.34 0 0 0 3 15.66a6.34 6.34 0 0 0 10.82 4.46V11.2a8.28 8.28 0 0 0 4.77 1.5V9.25a4.85 4.85 0 0 1-2.9-1.56 4.79 4.79 0 0 1-1.1-1z"/></svg>
-                        TikTok
-                    </a>
-                </div>
-            </div>
-
-            <!-- Columna 4: Información y Garantía -->
-            <div class="mb-footer-col">
-                <h3>🔒 Información y Garantía</h3>
-                <p>💳 <strong>Medios de Pago:</strong><br>Transferencia Bancaria Directa.<br><span style="font-size:0.8rem; color:#81c784;">(Próximamente tarjetas de débito/crédito)</span></p>
-                <p>🌿 <strong>Garantía de Llegada Segura:</strong><br>Aseguramos que recibes tu planta en óptimas condiciones de salud e hidratación.</p>
-                <p>⏱️ <strong>Términos de Entrega:</strong><br>Encuentros en andenes/torniquetes de Metro con espera máxima de 15 min. Despachos con aviso previo.</p>
+                    Instagram
+                </a>
+                <a href="https://www.tiktok.com/@mundo.brote" target="_blank" class="mb-social-btn mb-tt">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298-.002.595.042.88.13V9.4a6.33 6.33 0 0 0-1-.08A6.34 6.34 0 0 0 3 15.66a6.34 6.34 0 0 0 10.82 4.46V11.2a8.28 8.28 0 0 0 4.77 1.5V9.25a4.85 4.85 0 0 1-2.9-1.56 4.79 4.79 0 0 1-1.1-1z"/></svg>
+                    TikTok
+                </a>
             </div>
         </div>
 
-        <!-- Barra Inferior de Copyright -->
-        <div class="mb-footer-bottom">
-            <p>© 2026 Mundo Brote. Todos los derechos reservados. Cultivando momentos verdes en Santiago de Chile.</p>
+        <!-- Columna 4: Información y Garantía -->
+        <div class="mb-footer-col">
+            <h3>🔒 Información y Garantía</h3>
+            <p>💳 <strong>Medios de Pago:</strong><br>Transferencia Bancaria Directa.<br><span style="font-size:0.8rem; color:#81c784;">(Próximamente tarjetas de débito/crédito)</span></p>
+            <p>🌿 <strong>Garantía de Llegada Segura:</strong><br>Aseguramos que recibes tu planta en óptimas condiciones de salud e hidratación.</p>
+            <p>⏱️ <strong>Términos de Entrega:</strong><br>Encuentros en andenes/torniquetes de Metro con espera máxima de 15 min. Despachos con aviso previo.</p>
         </div>
-    </footer>
+    </div>
+
+    <!-- Barra Inferior de Copyright -->
+    <div class="mb-footer-bottom">
+        <p>© 2026 Mundo Brote. Todos los derechos reservados. Cultivando momentos verdes en Santiago de Chile.</p>
+    </div>
+</footer>
 
     <!-- Modal Ficha de Planta -->
     <div id="plantModal" class="modal">
@@ -1343,7 +1488,6 @@
                 .trim();
         }
 
-        // Convierte el nombre de la planta y del color en el nombre exacto del archivo .jpg
         function generateAutoImgPath(plantName, colorName) {
             const cleanPlant = cleanText(plantName).replace(/\(.*?\)/g, '').trim().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
             const cleanColor = cleanText(colorName).replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
@@ -1415,7 +1559,6 @@
                                     stockStatusMap[plantName] = cleanText(cols[statusIndex]);
                                 }
 
-                                // BUSCAR COLUMNAS PAREADAS DE OPCIONES Y SUS ESTADOS
                                 let variants = [];
                                 for (let c = 3; c < cols.length; c += 2) {
                                     const optNameRaw = cols[c];
@@ -1524,6 +1667,89 @@
             updateCartBadge();
         }
 
+        function applyFilters() {
+            const query = cleanText(document.getElementById('searchInput').value);
+            const priceRange = document.getElementById('priceFilterSelect').value;
+            const btnClear = document.getElementById('btnClearSearch');
+            const resultsSection = document.getElementById('searchResultsSection');
+            const resultsGrid = document.getElementById('list-search-results');
+            const resultsCount = document.getElementById('searchResultsCount');
+            const carrusel = document.querySelector('.carrusel-categorias');
+            const novedades = document.querySelector('.seccion-novedades');
+
+            btnClear.style.display = (query.length > 0) ? 'block' : 'none';
+
+            if (!query && priceRange === 'all') {
+                resultsSection.style.display = 'none';
+                if (carrusel) carrusel.style.display = 'flex';
+                if (novedades) novedades.style.display = 'block';
+                return;
+            }
+
+            if (carrusel) carrusel.style.display = 'none';
+            if (novedades) novedades.style.display = 'none';
+            resultsSection.style.display = 'block';
+            resultsGrid.innerHTML = '';
+
+            let matches = productsData.filter(p => {
+                const cleanName = cleanText(p.nombre);
+                const cleanCare = cleanText(p.cuidados || '');
+                const matchesText = !query || cleanName.includes(query) || cleanCare.includes(query);
+
+                const priceNum = parseInt(p.precio.replace(/[^0-9]/g, '')) || 0;
+                let matchesPrice = true;
+
+                if (priceRange !== 'all') {
+                    const [min, max] = priceRange.split('-').map(Number);
+                    matchesPrice = (priceNum >= min && priceNum <= max);
+                }
+
+                return matchesText && matchesPrice;
+            });
+
+            resultsCount.innerText = `${matches.length} planta(s) encontrada(s)`;
+
+            if (matches.length === 0) {
+                resultsGrid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px 10px; color: #b0bec5;">
+                        <p style="font-size: 1.1rem;">No encontramos plantas con esos criterios 🌿</p>
+                        <button onclick="clearFilters()" style="margin-top: 12px; background: rgba(74,222,128,0.15); border: 1px solid #4ade80; color: #4ade80; padding: 8px 16px; border-radius: 50px; cursor: pointer; font-weight: 600;">Ver todo el catálogo</button>
+                    </div>
+                `;
+                return;
+            }
+
+            matches.forEach(p => {
+                const cleanName = cleanText(p.nombre);
+                const status = stockStatusMap[cleanName];
+                const isAgotado = (status === 'agotado');
+
+                const card = document.createElement('div');
+                card.className = `card-plant ${isAgotado ? 'is-out-of-stock' : ''}`;
+                card.onclick = () => openModal(p.nombre, p.precio, p.cuidados, p.foto, p.fotoGrande, isAgotado);
+
+                const imgPath = (p.foto && p.foto !== "0") ? p.foto : 'fondo.jpg';
+
+                card.innerHTML = `
+                    <div class="card-img-wrapper">
+                        ${isAgotado ? '<span class="badge-agotado">⚠️ AGOTADO</span>' : ''}
+                        <img src="${imgPath}" class="card-img" alt="${p.nombre}" onerror="this.src='fondo.jpg'">
+                    </div>
+                    <div class="card-info">
+                        <div class="card-title">${p.nombre}</div>
+                        <div class="card-price">${p.precio}</div>
+                    </div>
+                `;
+                resultsGrid.appendChild(card);
+            });
+        }
+
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('priceFilterSelect').value = 'all';
+            applyFilters();
+        }
+
         function showView(viewId) {
             document.querySelectorAll('.page-view').forEach(view => view.classList.remove('active'));
             document.getElementById('view-' + viewId).classList.add('active');
@@ -1611,7 +1837,6 @@
                     const autoImg = selectedOpt.dataset.img;
                     const isOptAgotado = selectedOpt.dataset.agotado === 'true';
 
-                    // Carga la foto del color generado automáticamente. Si no existe la foto, mantiene la principal sin romper nada.
                     if (autoImg) {
                         const tempImg = new Image();
                         tempImg.onload = function() { modalImg.src = autoImg; };
