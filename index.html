@@ -10,11 +10,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; }
-        body { background-color: #121212; min-height: 100vh; color: white; display: flex; justify-content: center; align-items: flex-start; padding: 20px 15px; position: relative; }
+        body { background-color: #121212; min-height: 100vh; color: white; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 20px 0 0 0; position: relative; }
         .bg-image { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; filter: brightness(0.25); }
         
         /* CONTENEDOR LÍQUIDO PRINCIPAL */
-        .container { width: 90%; max-width: 1300px; text-align: center; margin: 0 auto; }
+        .container { width: 90%; max-width: 1300px; text-align: center; margin: 0 auto; flex-grow: 1; padding: 0 15px; }
 
         /* NAV HEADER */
         .nav-header { 
@@ -23,6 +23,12 @@
             align-items: center; 
             margin-bottom: 25px; 
             width: 100%;
+        }
+
+        .header-left-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
         .btn-back, .btn-cart-floating {
@@ -52,6 +58,24 @@
         .btn-back:hover {
             background: rgba(255, 255, 255, 0.25);
             transform: translateY(-2px);
+        }
+
+        /* ICONOS REDES SOCIALES EN CABECERA */
+        .header-social-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: #ffffff;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .header-social-btn:hover {
+            transform: translateY(-2px) scale(1.05);
         }
 
         .btn-cart-floating { 
@@ -88,8 +112,123 @@
             color: #b3b3b3;
             line-height: 1.6;
             max-width: 600px;
-            margin: 0 auto 30px auto;
+            margin: 0 auto 25px auto;
             padding: 0 10px;
+        }
+
+        /* BARRA DE BÚSQUEDA Y FILTROS */
+        .search-filter-container {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            max-width: 750px;
+            margin: 0 auto 30px auto;
+            background: rgba(26, 31, 28, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 12px 18px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .search-box-wrapper {
+            position: relative;
+            flex: 1;
+            min-width: 220px;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            font-size: 0.95rem;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 10px 36px 10px 38px;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 50px;
+            color: #ffffff;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+
+        #searchInput:focus {
+            border-color: #4ade80;
+            background: rgba(0, 0, 0, 0.55);
+        }
+
+        .btn-clear-search {
+            position: absolute;
+            right: 12px;
+            background: transparent;
+            border: none;
+            color: #9e9e9e;
+            font-size: 0.9rem;
+            cursor: pointer;
+            padding: 4px;
+        }
+        .btn-clear-search:hover { color: #ffffff; }
+
+        .price-filter-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .price-filter-wrapper label {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #81c784;
+        }
+
+        #priceFilterSelect {
+            padding: 10px 14px;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 50px;
+            color: #ffffff;
+            font-size: 0.88rem;
+            outline: none;
+            cursor: pointer;
+        }
+        #priceFilterSelect:focus { border-color: #4ade80; }
+        #priceFilterSelect option { background: #1a1f1c; color: #ffffff; }
+
+        /* SECCIÓN RESULTADOS DE BÚSQUEDA */
+        .search-results-section {
+            margin-bottom: 35px;
+            text-align: left;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            padding-bottom: 8px;
+        }
+
+        .results-header h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .results-count {
+            font-size: 0.85rem;
+            color: #81c784;
+            font-weight: 600;
         }
 
         .cat-title {
@@ -102,7 +241,7 @@
             padding-bottom: 6px;
         }
 
-        /* CARRUSEL DE CATEGORÍAS (ESCRITORIO) */
+        /* CARRUSEL DE CATEGORÍAS */
         .carrusel-categorias {
             display: flex;
             justify-content: center;
@@ -191,7 +330,7 @@
             color: #4ade80;
         }
 
-        /* SECCIÓN NOVEDADES (RECIÉN LLEGADAS) */
+        /* SECCIÓN NOVEDADES */
         .seccion-novedades {
             background: rgba(35, 38, 36, 0.65);
             backdrop-filter: blur(12px);
@@ -313,7 +452,7 @@
             color: #4caf50;
         }
 
-        /* GRID CATÁLOGO EN PC */
+        /* GRID CATÁLOGO */
         .plant-grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
@@ -385,16 +524,10 @@
             color: #4caf50; 
         }
 
-        /* ESTILOS PARA PRODUCTOS AGOTADOS */
+        /* AGOTADOS */
         .card-plant.is-out-of-stock, .card-novedad.is-out-of-stock {
             opacity: 0.6;
             filter: grayscale(0.4);
-        }
-
-        .card-plant.is-out-of-stock:hover, .card-novedad.is-out-of-stock:hover {
-            transform: none;
-            border-color: rgba(255, 255, 255, 0.12);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
         }
 
         .badge-agotado {
@@ -510,15 +643,12 @@
             flex-grow: 1;
         }
 
-        .modal-body-scroll::-webkit-scrollbar {
-            width: 6px;
-        }
+        .modal-body-scroll::-webkit-scrollbar { width: 6px; }
         .modal-body-scroll::-webkit-scrollbar-thumb {
             background: rgba(255, 255, 255, 0.2);
             border-radius: 10px;
         }
 
-        /* ESTILO PARA SELECTOR DE OPCIONES CON MUESTRA DE COLOR (SWATCH) */
         .options-container {
             margin-top: 12px;
             margin-bottom: 6px;
@@ -556,9 +686,7 @@
             outline: none;
             cursor: pointer;
         }
-        .options-select:focus {
-            border-color: #4caf50;
-        }
+        .options-select:focus { border-color: #4caf50; }
 
         .btn-toggle-info { 
             width: 100%; 
@@ -577,10 +705,7 @@
             align-items: center; 
             transition: background 0.2s;
         }
-
-        .btn-toggle-info:hover {
-            background: rgba(255, 255, 255, 0.12);
-        }
+        .btn-toggle-info:hover { background: rgba(255, 255, 255, 0.12); }
 
         .toggle-box { 
             display: none; 
@@ -590,7 +715,6 @@
             border-radius: 10px; 
             margin-top: 8px; 
             margin-bottom: 15px; 
-            margin-left: 0;
             font-size: 0.9rem; 
             color: #d1d8d3; 
             white-space: pre-wrap; 
@@ -599,19 +723,12 @@
             text-align: left;
         }
 
-        .toggle-box p {
-            color: #b0bec5;
-            font-weight: 500;
-        }
-
         .ref-img-container { 
             display: flex;
             flex-direction: column;
             gap: 10px;
             margin-top: 10px; 
             margin-bottom: 10px; 
-            margin-left: 0;
-            padding: 0;
             width: 100%; 
         }
 
@@ -655,11 +772,7 @@
             transition: background-color 0.2s, transform 0.1s;
             box-shadow: 0 4px 14px rgba(46, 125, 50, 0.4);
         }
-
-        .btn-add-cart:hover {
-            background-color: #388e3c;
-            transform: translateY(-1px);
-        }
+        .btn-add-cart:hover { background-color: #388e3c; transform: translateY(-1px); }
 
         .close-btn { 
             position: absolute; 
@@ -669,7 +782,6 @@
             color: #ffffff; 
             cursor: pointer; 
             z-index: 30; 
-            font-weight: bold; 
             background: rgba(255, 255, 255, 0.12); 
             border-radius: 50%; 
             width: 36px; 
@@ -679,58 +791,250 @@
             justify-content: center; 
             transition: background 0.2s;
         }
+        .close-btn:hover { background: rgba(255, 255, 255, 0.25); }
 
-        .close-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
+        /* FOOTER MUNDO BROTE */
+        .mb-footer {
+            background: rgba(18, 22, 20, 0.95);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+            color: #e0e0e0;
+            margin-top: 60px;
+            padding-top: 40px;
+            font-size: 0.9rem;
+            width: 100%;
+            text-align: left;
         }
 
-        /* MEDIA QUERY PARA MÓVILES */
+        .mb-footer-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 30px;
+        }
+
+        .mb-footer-col h3 {
+            color: #4ade80;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mb-footer-col p {
+            color: #b0bec5;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .mb-footer-col a {
+            color: #81c784;
+            text-decoration: none;
+        }
+
+        .mb-footer-col a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        .mb-social-links {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .mb-social-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #ffffff !important;
+            text-decoration: none !important;
+        }
+
+        .mb-ig { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+        .mb-tt { background: #010101; border: 1px solid rgba(255, 255, 255, 0.3); }
+
+        .mb-footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin-top: 35px;
+            padding: 20px 15px;
+            text-align: center;
+            font-size: 0.82rem;
+            color: #90a4ae;
+        }
+
+        /* ESTILOS DEL CHATBOT WEB FLOTANTE */
+        .chat-bubble-btn {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2e7d32, #4ade80);
+            color: white;
+            border: none;
+            box-shadow: 0 8px 24px rgba(46, 125, 50, 0.5);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            z-index: 9999;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+        }
+        .chat-bubble-btn:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 12px 30px rgba(74, 222, 128, 0.6);
+        }
+        .chat-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 3px 7px;
+            border-radius: 50px;
+            border: 2px solid #121212;
+        }
+
+        .chat-window {
+            display: none;
+            position: fixed;
+            bottom: 95px;
+            right: 25px;
+            width: 360px;
+            height: 520px;
+            max-height: 80vh;
+            background: rgba(22, 27, 24, 0.94);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.8);
+            z-index: 9999;
+            flex-direction: column;
+            overflow: hidden;
+            animation: chatSlideUp 0.3s ease;
+        }
+        @keyframes chatSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chat-header {
+            padding: 16px;
+            background: rgba(35, 42, 38, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .chat-header-info { display: flex; align-items: center; gap: 10px; }
+        .chat-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #2e7d32;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        .chat-title { font-size: 0.95rem; font-weight: 700; color: #ffffff; }
+        .chat-status { font-size: 0.75rem; color: #4ade80; display: flex; align-items: center; gap: 4px; }
+        .status-dot { width: 7px; height: 7px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 6px #4ade80; }
+        .chat-close-btn { background: transparent; border: none; color: #9ca3af; font-size: 20px; cursor: pointer; padding: 4px; }
+        .chat-close-btn:hover { color: #ffffff; }
+
+        .chat-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            font-size: 0.88rem;
+        }
+        .chat-messages::-webkit-scrollbar { width: 5px; }
+        .chat-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+
+        .msg { max-width: 82%; padding: 10px 14px; border-radius: 14px; line-height: 1.45; word-wrap: break-word; }
+        .msg-bot {
+            align-self: flex-start;
+            background: rgba(46, 125, 50, 0.22);
+            border: 1px solid rgba(74, 222, 128, 0.25);
+            color: #e5e7eb;
+            border-bottom-left-radius: 4px;
+        }
+        .msg-user {
+            align-self: flex-end;
+            background: #2e7d32;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-input-area {
+            padding: 12px 14px;
+            background: rgba(18, 22, 20, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 8px;
+        }
+        .chat-input {
+            flex: 1;
+            background: #232a26;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 50px;
+            padding: 10px 16px;
+            color: white;
+            font-size: 0.88rem;
+            outline: none;
+        }
+        .chat-input:focus { border-color: #4ade80; }
+        .chat-send-btn {
+            background: #2e7d32;
+            border: none;
+            color: white;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .chat-send-btn:hover { background: #388e3c; }
+
         @media (max-width: 768px) {
             .container { width: 100%; padding: 0 10px; }
             .home-title { font-size: 1.9rem; }
-            .home-subtitle { font-size: 0.88rem; margin-bottom: 25px; }
-
             .carrusel-categorias {
                 justify-content: flex-start;
                 flex-wrap: nowrap;
                 overflow-x: auto;
                 scroll-snap-type: x mandatory;
-                scrollbar-width: none;
-                -ms-overflow-style: none;
             }
-
-            .carrusel-categorias::-webkit-scrollbar { display: none; }
-
-            .card-categoria { 
-                flex: 0 0 200px; 
-                min-width: 200px;
-                max-width: 200px;
-                height: 300px; 
-                padding: 16px; 
-                scroll-snap-align: start;
-            }
-
-            .card-categoria-title { font-size: 1.05rem; }
-            .novedades-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            .card-novedad-img-wrapper { height: 180px; }
-            .plant-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            .card-img-wrapper { height: 180px; }
-            .card-info, .card-novedad-info { padding: 12px; }
-            
-            .modal { padding: 12px; }
-            .modal-content { 
-                flex-direction: column; 
-                height: 90vh; 
-                max-height: 90vh; 
-                border-radius: 16px; 
-            }
-            .modal-left { width: 100%; height: 200px; padding: 10px; flex-shrink: 0; }
-            .modal-right { width: 100%; height: auto; flex-grow: 1; }
-            .modal-header-info { padding: 15px 15px 10px 15px; }
-            .modal-body-scroll { padding: 0 15px 15px 15px; }
-            .modal-footer { padding: 12px 15px 15px 15px; }
-            .close-btn { top: 10px; right: 10px; }
-            .ref-img { height: 180px; }
+            .card-categoria { flex: 0 0 200px; min-width: 200px; max-width: 200px; height: 300px; padding: 16px; scroll-snap-align: start; }
+            .novedades-grid, .plant-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .card-img-wrapper, .card-novedad-img-wrapper { height: 180px; }
+            .modal-content { flex-direction: column; height: 90vh; }
+            .modal-left { width: 100%; height: 200px; }
+            .modal-right { width: 100%; }
+            .chat-window { bottom: 85px; right: 15px; left: 15px; width: auto; height: 75vh; }
+            .chat-bubble-btn { bottom: 20px; right: 20px; width: 55px; height: 55px; font-size: 24px; }
         }
     </style>
 </head>
@@ -740,18 +1044,52 @@
 
     <div class="container">
         <div class="nav-header">
-            <button class="btn-back" id="btnBackHome" onclick="showView('home')">← Menú</button>
+            <div class="header-left-group">
+                <button class="btn-back" id="btnBackHome" onclick="showView('home')">← Menú</button>
+                <a href="https://www.instagram.com/mundo.brote" target="_blank" class="header-social-btn mb-ig" title="Instagram @mundo.brote">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                </a>
+                <a href="https://www.tiktok.com/@mundo.brote" target="_blank" class="header-social-btn mb-tt" title="TikTok @mundo.brote">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298-.002.595.042.88.13V9.4a6.33 6.33 0 0 0-1-.08A6.34 6.34 0 0 0 3 15.66a6.34 6.34 0 0 0 10.82 4.46V11.2a8.28 8.28 0 0 0 4.77 1.5V9.25a4.85 4.85 0 0 1-2.9-1.56 4.79 4.79 0 0 1-1.1-1z"/></svg>
+                </a>
+            </div>
+
             <a href="carrito.html" class="btn-cart-floating">🛒 Carrito (<span id="cartCount">0</span>)</a>
         </div>
 
-        <!-- Vista 1: Menú Principal -->
         <div id="view-home" class="page-view active">
             <h1 class="home-title"><span>🌿</span> Mundo Brote</h1>
             <p class="home-subtitle">
                 Bienvenidos, brotecitos. Preparamos esta selección especial para ayudarte a elegir el próximo brote que transformará tus espacios en un hermoso refugio natural y te acompañará para que nunca estés solo.
             </p>
 
-            <!-- CARRUSEL SLIDER DE CATEGORÍAS VERTICALES -->
+            <div class="search-filter-container">
+                <div class="search-box-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" placeholder="Buscar planta (ej: Ficus, Violeta, Suculenta)..." oninput="applyFilters()">
+                    <button id="btnClearSearch" class="btn-clear-search" onclick="clearFilters()" style="display:none;">✕</button>
+                </div>
+
+                <div class="price-filter-wrapper">
+                    <label for="priceFilterSelect">💰 Precio:</label>
+                    <select id="priceFilterSelect" onchange="applyFilters()">
+                        <option value="all">Todos</option>
+                        <option value="0-3000">Hasta $3.000</option>
+                        <option value="3001-6000">$3.000 a $6.000</option>
+                        <option value="6001-10000">$6.000 a $10.000</option>
+                        <option value="10001-999999">Más de $10.000</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="searchResultsSection" class="search-results-section" style="display: none;">
+                <div class="results-header">
+                    <h2 id="searchResultsTitle">🌿 Resultados de la búsqueda</h2>
+                    <span id="searchResultsCount" class="results-count">0 encontrados</span>
+                </div>
+                <div class="plant-grid" id="list-search-results"></div>
+            </div>
+
             <div class="carrusel-categorias">
                 <div class="card-categoria cat-suculentas" onclick="showView('cat-suculentas')">
                     <div class="card-categoria-content">
@@ -789,14 +1127,12 @@
                 </a>
             </div>
 
-            <!-- SECCIÓN: RECIÉN LLEGADAS -->
             <div class="seccion-novedades">
                 <h2 class="novedades-titulo">✨ Recién Llegadas a Mundo Brote</h2>
                 <div class="novedades-grid" id="gridNovedades"></div>
             </div>
         </div>
 
-        <!-- Secciones de Categorías -->
         <div id="view-cat-suculentas" class="page-view">
             <h1 class="cat-title">🌵 Suculentas y Colgantes</h1>
             <div class="plant-grid" id="list-suculentas"></div>
@@ -818,23 +1154,56 @@
         </div>
     </div>
 
-    <!-- Modal Ficha de Planta -->
+    <!-- FOOTER MUNDO BROTE -->
+    <footer class="mb-footer">
+        <div class="mb-footer-container">
+            <div class="mb-footer-col">
+                <h3>🌿 Mundo Brote</h3>
+                <p>Selección y distribución de plantas de interior, exterior, flores de temporada y suculentas. Llevamos la naturaleza y vida a distintas zonas de Santiago y a cada rincón de tu hogar.</p>
+            </div>
+
+            <div class="mb-footer-col">
+                <h3>📍 Dónde Encontrarnos</h3>
+                <p>🏬 <strong>Punto de Retiro:</strong><br>Pasaje Alcalde Luis Navarro Avilés 1413, San Bernardo</p>
+                <p>🏢 <strong>Punto de Atención:</strong><br>Colón 1377, Independencia, Santiago</p>
+            </div>
+
+            <div class="mb-footer-col">
+                <h3>💬 Contacto y Redes</h3>
+                <p>📲 <strong>Ventas WhatsApp:</strong><br><a href="https://wa.me/56956138382" target="_blank">+569 5613 8382</a></p>
+                <p>✉️ <strong>Correo Oficial:</strong><br><a href="mailto:mundo.brote.ventas@gmail.com">mundo.brote.ventas@gmail.com</a></p>
+                
+                <div class="mb-social-links">
+                    <a href="https://www.instagram.com/mundo.brote" target="_blank" class="mb-social-btn mb-ig">Instagram</a>
+                    <a href="https://www.tiktok.com/@mundo.brote" target="_blank" class="mb-social-btn mb-tt">TikTok</a>
+                </div>
+            </div>
+
+            <div class="mb-footer-col">
+                <h3>🔒 Información y Garantía</h3>
+                <p>💳 <strong>Medios de Pago:</strong><br>Transferencia Bancaria Directa.</p>
+                <p>🌿 <strong>Garantía de Llegada:</strong><br>Plantas hidratadas y en óptimas condiciones.</p>
+            </div>
+        </div>
+
+        <div class="mb-footer-bottom">
+            <p>© 2026 Mundo Brote. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- MODAL DE DETALLE -->
     <div id="plantModal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal()">&times;</span>
-            
             <div class="modal-left">
                 <img id="modalImg" src="fondo.jpg" class="modal-img imagen-modal-brote" alt="Foto Real" onclick="ampliarFoto(this.src)">
             </div>
-
             <div class="modal-right">
                 <div class="modal-header-info">
                     <h2 id="modalTitle" class="modal-title"></h2>
                     <div id="modalPrice" class="modal-price"></div>
                 </div>
-
                 <div class="modal-body-scroll">
-                    <!-- CONTENEDOR DESPLEGABLE DE COLORES / OPCIONES CON MUESTRA (SWATCH) -->
                     <div id="optionsWrapper" class="options-container" style="display: none;">
                         <label for="variantSelect">🎨 Selecciona un color / opción:*</label>
                         <div class="options-flex-row">
@@ -842,7 +1211,6 @@
                             <select id="variantSelect" class="options-select" onchange="checkVariantStock()"></select>
                         </div>
                     </div>
-
                     <button id="btnGrowBox" class="btn-toggle-info" onclick="toggleBox('growBox')">✨ ¿Cómo será de grande? <span>▼</span></button>
                     <div id="growBox" class="toggle-box">
                         <p style="margin-bottom:8px;">Así lucirá desarrollada:</p>
@@ -851,11 +1219,9 @@
                             <span class="ref-badge">⚠️ Imagen de referencia</span>
                         </div>
                     </div>
-
                     <button class="btn-toggle-info" onclick="toggleBox('careBox')">🌿 Cuidados que necesita <span>▼</span></button>
                     <div id="careBox" class="toggle-box"><div id="modalCare"></div></div>
                 </div>
-
                 <div class="modal-footer">
                     <button id="btnModalAdd" class="btn-add-cart" onclick="addToCartCurrent()">🛒 Agregar al Carrito</button>
                 </div>
@@ -863,297 +1229,81 @@
         </div>
     </div>
 
+    <!-- WIDGET CHATBOT ASISTENTE BOTÁNICO (CONECTADO A TU RAILWAY) -->
+    <button class="chat-bubble-btn" onclick="toggleWebChat()" title="Consultar Asistente Botánico">
+        🌿
+        <span class="chat-badge">IA</span>
+    </button>
+
+    <div id="mbWebChat" class="chat-window">
+        <div class="chat-header">
+            <div class="chat-header-info">
+                <div class="chat-avatar">🪴</div>
+                <div>
+                    <div class="chat-title">Asistente Mundo Brote</div>
+                    <div class="chat-status"><span class="status-dot"></span> En línea 24/7</div>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <a href="https://wa.me/56956138382" target="_blank" title="Pasar a WhatsApp" style="color: #4ade80; text-decoration: none; font-size: 16px;">📲</a>
+                <button class="chat-close-btn" onclick="toggleWebChat()">&times;</button>
+            </div>
+        </div>
+
+        <div id="chatMessagesList" class="chat-messages">
+            <div class="msg msg-bot">
+                ¡Hola, brotecito! 👋🌿 Soy tu asesor botánico virtual. ¿Tienes dudas sobre cuidados de tus plantas o qué variedad elegir? Escríbeme aquí abajo.
+            </div>
+        </div>
+
+        <div class="chat-input-area">
+            <input type="text" id="webChatInput" class="chat-input" placeholder="Pregunta sobre cuidados..." onkeypress="handleChatEnter(event)">
+            <button class="chat-send-btn" onclick="sendWebChatMessage()">➤</button>
+        </div>
+    </div>
+
     <script>
         const GOOGLE_SHEETS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSoia3X9f5vXSWeNx_f8_0bKUJBDiYjWVSId6QZfJezU6GhEtKLAuZ9InjM5IjKya0k_0v-TgW3BwUK/pub?gid=0&single=true&output=csv";
+        const API_CHAT_URL = "https://bot-mundobrote-production.up.railway.app/api/chat";
 
         let productsData = [
-            // SUCULENTAS Y COLGANTES
-            {
-                nombre: "Rosario (Senecio rowleyanus)",
-                categoria: "suculentas",
-                precio: "$4.000",
-                foto: "suculentas/rosario.jpg",
-                fotoGrande: "suculentas/rosario-grande.jpg",
-                cuidados: "☀️ Luz:\n💡 Mucha luz indirecta y brillante.\n🌅 Un poco de sol suave por la mañana (evita el sol fuerte del mediodía).\n\n💧 Agua:\n🌵 Riega solo cuando el sustrato esté 100% seco.\n🔍 Pista: Si las bolitas están arrugadas, pide agua.\n\n🚫 ¡Cuidado! El exceso de agua la pudre muy rápido. Usa maceta con drenaje."
-            },
-            {
-                nombre: "Ceropegia (Cadena de corazones)",
-                categoria: "suculentas",
-                precio: "$4.000",
-                foto: "suculentas/ceropegias.jpg",
-                fotoGrande: "suculentas/ceropegiagrandes.jpg",
-                cuidados: "💚 Cuidados: Ceropegia (Cadena de Corazones)\n📊 Dificultad: Fácil ⭐⭐☆☆☆\n\n☀️ Luz: Mucha luz indirecta. Un poco de sol suave por la mañana le sienta bien.\n💧 Agua: Riega solo cuando el sustrato esté totalmente seco. En invierno, casi nada.\n⚠️ Precaución:\n🚫 Peligro de ahogamiento: El exceso de agua pudre la raíz.\n❄️ Frío: Proteger de heladas (mínimo 10 °C)."
-            },
-            {
-                nombre: "Shrek (Crassula ovata Gollum)",
-                categoria: "suculentas",
-                precio: "$3.000",
-                foto: "suculentas/shrek.jpg",
-                fotoGrande: "suculentas/shrekgrande.jpg",
-                cuidados: "💚 Cuidados: Crassula Ovata (Orejas de Shrek)\n📊 Dificultad: Muy Fácil ⭐☆☆☆☆\n\n☀️ Luz: Mucha luz o sol directo. Cuanto más sol reciba, más rojas sus puntas.\n💧 Agua: Riego muy escaso. Solo con tierra 100% seca.\n⚠️ Precaución:\n🚫 Exceso de agua pudre el tallo rápidamente.\n❄️ Heladas: Sensible al frío extremo (proteger si baja de 5 °C)."
-            },
-            {
-                nombre: "Rubí (Alternanthera porrigens)",
-                categoria: "suculentas",
-                precio: "$6.000",
-                foto: "suculentas/rubi.jpg",
-                fotoGrande: "suculentas/rubigrande.jpg",
-                cuidados: "💚 Cuidados: Ochna Serrulata (Mickey Mouse / Rubí)\n📊 Dificultad: Media/Alta ⭐⭐⭐☆☆\n\n☀️ Luz: Mucha luz o sol directo (mínimo 4-8 horas al día).\n💧 Agua: Riego moderado. Mantén la tierra ligeramente húmeda.\n⚠️ Precaución: Aclimatar gradualmente al sol directo. Requiere buen drenaje."
-            },
-            {
-                nombre: "Sedum Tokio",
-                categoria: "suculentas",
-                precio: "$3.000",
-                foto: "suculentas/sedumtokio.jpg",
-                fotoGrande: "suculentas/sedumtokiogrande.jpg",
-                cuidados: "☀️ Luz: Necesita muchísima luz o sol directo para mantener su color y forma compacta.\n💧 Agua: Baja. Suculenta colgante tapizante muy fina que aguanta bien la sequía. Riega solo cuando el sustrato esté totalmente seco.\n⚠️ Precaución: Muy delicada al tacto; sus pequeñas hojas se desprenden con facilidad si se manipulan de forma brusca."
-            },
-
-            // PLANTAS DE INTERIOR
-            {
-                nombre: "Ficus Danielle",
-                categoria: "interior",
-                precio: "$7.000",
-                foto: "interior/ficus.jpg",
-                fotoGrande: "interior/ficusgrande.jpg",
-                cuidados: "💚 Cuidados: Ficus Benjamina Variegado\n📊 Dificultad: Media ⭐⭐⭐☆☆\n\n☀️ Luz: Mucha luz indirecta brillante. Necesita luz intensa para mantener sus bordes blancos tan intensos.\n💧 Agua: Moderada. Riega de forma uniforme manteniendo el sustrato húmedo, pero sin encharcar para evitar que se pudran las raíces.\n⚠️ Precaución: Sensible a las corrientes de aire frío del invierno y a los cambios bruscos de lugar."
-            },
-            {
-                nombre: "Ficus Hawaiano (Ficus variegado)",
-                categoria: "interior",
-                precio: "$7.000",
-                foto: "interior/FicusHawaiano.jpg",
-                fotoGrande: "interior/ficushawaianogrande.jpg",
-                cuidados: "💚 Cuidados: Ficus Lyrata / Pandurata\n📊 Dificultad: Media/Alta ⭐⭐⭐☆☆\n\n☀️ Luz: Luz indirecta muy brillante o semisombra luminosa. Colócalo cerca de una ventana muy iluminada.\n💧 Agua: Moderada. Riega solo cuando los primeros centímetros del sustrato estén secos. Odia el exceso de agua.\n⚠️ Precaución: Limpia el polvo de sus densas y grandes hojas para mantener su fotosíntesis activa. Evita cambiarlo de sitio."
-            },
-            {
-                nombre: "Tradescantia zebrina",
-                categoria: "interior",
-                precio: "$6.500",
-                foto: "interior/tradescantiazebrina.jpg",
-                fotoGrande: "interior/tradescantiagrande.jpg",
-                cuidados: "📊 Nivel de cuidado: Fácil / Principiante ⭐☆☆☆☆\n\n☀️ Sol: Luz indirecta brillante. Necesita mucha luz para mantener sus intensos tonos morados.\n💧 Agua: Moderada. Riega cuando los primeros centímetros estén secos.\n⚠️ Precaución: Tóxica para mascotas. Ve cortando las puntas para replantar y mantenerla tupida."
-            },
-            {
-                nombre: "Tradescantia fluminensis",
-                categoria: "interior",
-                precio: "$7.000",
-                foto: "interior/tradescantia.jpg",
-                fotoGrande: "interior/Tradescantiafluminensisgrande.jpg",
-                cuidados: "📊 Nivel de cuidado: Fácil / Principiante ⭐☆☆☆☆\n\n☀️ Sol: Luz indirecta brillante. Necesita mucha luz para mantener sus intensos tonos morados.\n💧 Agua: Moderada. Riega cuando los primeros centímetros estén secos.\n⚠️ Precaución: Tóxica para mascotas. Ve cortando las puntas para replantar y mantenerla tupida."
-            },
-            {
-                nombre: "Plumoso",
-                categoria: "interior",
-                precio: "$4.500",
-                foto: "interior/plumoso.jpg",
-                fotoGrande: "interior/plumosogrande.jpg",
-                cuidados: "📊 Nivel de cuidado: Intermedio ⭐⭐⭐☆☆\n\n☀️ Sol: Luz indirecta brillante o semisombra.\n💧 Agua: Frecuente. Necesita que el sustrato esté siempre ligeramente húmedo.\n⚠️ Precaución: Requiere alta humedad ambiental. Desarrolla pequeñas espinas."
-            },
-            {
-                nombre: "Cucharita (Peperomia)",
-                categoria: "interior",
-                precio: "$6.500",
-                foto: "interior/cucharita.jpg",
-                fotoGrande: "interior/cucharitagrande.jpg",
-                cuidados: "☀️ Luz: Luz indirecta brillante. El sol directo del mediodía quemará sus delicadas hojas.\n💧 Agua: Moderada. Riega cuando los primeros centímetros de tierra estén secos.\n⚠️ Precaución: Sensible al frío y a las heladas. Es completamente segura para mascotas."
-            },
-            {
-                nombre: "Pink Lady (Callisia repens)",
-                categoria: "interior",
-                precio: "$4.500",
-                foto: "interior/pink.jpg",
-                fotoGrande: "interior/pinkgrande.jpg",
-                cuidados: "☀️ Luz: Mucha luz indirecta muy brillante para mantener sus tonos rosados.\n💧 Agua: Moderada. Deja que la mitad superior del sustrato se seque entre riegos.\n⚠️ Precaución: Requiere podas frecuentes en las puntas para mantener una forma compacta y redondeada."
-            },
-            {
-                nombre: "Singonio Verde",
-                categoria: "interior",
-                precio: "$5.500",
-                foto: "interior/singonioverde.jpg",
-                fotoGrande: "interior/singonioverdegrande.jpg",
-                cuidados: "☀️ Luz: Luz indirecta brillante a semisombra.\n💧 Agua: Moderada. Riega cuando la superficie de la tierra se note seca (2-3 cm).\n⚠️ Precaución: Le encanta la humedad ambiental. Con el tiempo sacará guías trepadoras que puedes podar o tutorar."
-            },
-            {
-                nombre: "Singonio Variegado Albo",
-                categoria: "interior",
-                precio: "$10.000",
-                foto: "interior/singonioalbo.jpg",
-                fotoGrande: "interior/singoniomutado.jpg",
-                cuidados: "☀️ Luz: Luz indirecta muy brillante para conservar sus manchas blancas.\n💧 Agua: Moderada. Espera a que la mitad superior del sustrato se seque antes de regar.\n⚠️ Precaución: Requiere una humedad ambiental superior al 50% para proteger sus partes blancas."
-            },
-            {
-                nombre: "Incienso (Planta del incienso)",
-                categoria: "interior",
-                precio: "$2.000",
-                foto: "interior/incienso.jpg",
-                fotoGrande: "interior/inciensogrande.jpg",
-                cuidados: "☀️ Luz: Luz indirecta brillante a semisombra.\n💧 Agua: Alta. El sustrato debe mantenerse siempre ligeramente húmedo sin encharcar.\n⚠️ Precaución: Exige alta humedad ambiental. Es una planta 100% Pet Friendly."
-            },
-            {
-                nombre: "Dólar Blanco ( Planta del dinero)",
-                categoria: "interior",
-                precio: "$3.500",
-                foto: "interior/dolar.jpg",
-                fotoGrande: "interior/dolargrande.jpg",
-                cuidados: "☀️ Luz: Luz indirecta brillante. Agradece un par de horas de sol suave matutino.\n💧 Agua: Moderada a baja. Deja secar bien el sustrato entre riegos.\n⚠️ Precaución: Realiza despuntes frecuentes en las puntas jóvenes para estimular un crecimiento tupido y arbustivo."
-            },
-            {
-                nombre: "Helecho ( Helecho Espada)",
-                categoria: "interior",
-                precio: "$4.500",
-                foto: "interior/helechoespada.jpg",
-                fotoGrande: "interior/helechoespadagrande.jpg",
-                cuidados: "☀️ Luz: Luz indirecta brillante o sol suave de la mañana. Tolera semisombra en interiores bien iluminados.\n💧 Agua: Moderada a baja. Riega solo cuando el sustrato se haya secado por completo entre riegos.\n⚠️ Precaución: Evita a toda costa el encharcamiento, ya que el exceso de agua pudre rápidamente sus raíces."
-            },
-            {
-                nombre: "Monalisa (Mona Lavender)",
-                categoria: "interior",
-                precio: "$4.500",
-                foto: "interior/monalisa.jpg",
-                fotoGrande: "interior/monalisagrande.jpg",
-                cuidados: "☀️ Luz: Luz indirecta brillante. Agradece un par de horas de sol suave matutino.\n💧 Agua: Moderada a baja. Deja secar bien el sustrato entre riegos.\n⚠️ Precaución: Realiza despuntes frecuentes en las puntas jóvenes para estimular un crecimiento tupido y arbustivo."
-            },
-
-            // PLANTAS CON FLOR
-            {
-                nombre: "Cinerarias",
-                categoria: "flor",
-                precio: "$2.000",
-                foto: "flores/plantacineraria.jpg",
-                fotoGrande: "flores/cinerariasgrande.jpg",
-                cuidados: "📊 Dificultad: Media ⭐⭐⭐☆☆\n\n☀️ Luz: Luz abundante pero siempre indirecta. El sol directo quema sus terciopeladas flores y hojas.\n💧 Agua: Riego por abajo (inmersión). Mantén el sustrato húmedo sin mojar las hojas.\n⚠️ Precaución: Sensible a la humedad excesiva sobre sus flores."
-            },
-            {
-                nombre: "Clavelinos",
-                categoria: "flor",
-                precio: "$1.200",
-                foto: "flores/clavelinos.jpg",
-                fotoGrande: "flores/clavelinosgrandes.jpg",
-                cuidados: "📊 Dificultad: Baja (Muy fácil) ⭐☆☆☆☆\n\n☀️ Luz: Pleno sol (necesita de 5 a 6 horas directas para florecer bien).\n💧 Agua: Riego moderado. Deja secar la superficie de la tierra entre riegos.\n⚠️ Precaución: Muy sensible al calor y plagas. No mojes sus hojas ni flores."
-            },
-            {
-                nombre: "Violeta persia",
-                categoria: "flor",
-                precio: "$7.000",
-                foto: "flores/violetapersia.jpg",
-                fotoGrande: "flores/violetapersiagrande.jpg",
-                cuidados: "📊 Dificultad: Media ⭐⭐⭐☆☆\n\n☀️ Luz: Luz brillante sin sol directo.\n💧 Agua: Riego por inmersión/plato (15 min desde abajo y retira exceso).\n⚠️ Precaución: Sensible al exceso de agua, evita el encharcamiento."
-            },
-            {
-                nombre: "Ranúnculos",
-                categoria: "flor",
-                precio: "$4.000",
-                foto: "flores/ranunculos.jpg",
-                fotoGrande: "flores/ranunculosgrandes.jpg",
-                cuidados: "📊 Dificultad: Media ⭐⭐⭐☆☆\n\n☀️ Luz: Sol directo o semisombra muy luminosa.\n💧 Agua: Riego moderado. Mantén la tierra húmeda mientras crece.\n⚠️ Precaución: NUNCA mojes el bulbo ni el centro de la planta. Tóxica si se ingiere."
-            },
-            {
-                nombre: "Primaveras",
-                categoria: "flor",
-                precio: "$3.000",
-                foto: "flores/primavera.jpg",
-                fotoGrande: "flores/primaveragrande.jpg",
-                cuidados: "📊 Dificultad: Baja a Media ⭐⭐☆☆☆\n\n☀️ Luz: Semisombra (evita el sol fuerte del mediodía).\n💧 Agua: Riego constante. Requiere sustrato húmedo.\n⚠️ Precaución: Sufre mucho con la sequía y las altas temperaturas."
-            },
-            {
-                nombre: "Caléndulas",
-                categoria: "flor",
-                precio: "$1.000",
-                foto: "flores/calendula.jpg",
-                fotoGrande: "flores/calendulagrande.jpg",
-                cuidados: "📊 Dificultad: Muy baja (Súper resistente) ⭐☆☆☆☆\n\n☀️ Luz: Pleno sol.\n💧 Agua: Riego moderado. Aguanta breves sequías."
-            },
-            {
-                nombre: "Orejas de oso",
-                categoria: "flor",
-                precio: "$1.200",
-                foto: "flores/orejasdeoso.jpg",
-                fotoGrande: "flores/orejasdeosogrande.jpg",
-                cuidados: "📊 Dificultad: Baja a Media ⭐⭐☆☆☆\n\n☀️ Luz: Pleno sol a semisombra muy clara.\n💧 Agua: Riego moderado a bajo. Deja secar la tierra entre riegos.\n⚠️ Precaución: Propensa al oídio (hongo blanco) si se mojan las hojas. Riega siempre directo al sustrato."
-            },
-            {
-                nombre: "Margarita africana",
-                categoria: "flor",
-                precio: "$4.500",
-                foto: "flores/margaritaafricana.jpg",
-                fotoGrande: "flores/margaritaafricanagrande.jpg",
-                cuidados: "📊 Dificultad: Muy baja ⭐☆☆☆☆\n\n☀️ Luz: Pleno sol directo (el sol hace que se abran completamente).\n💧 Agua: Riego bajo a moderado. Soporta muy bien el calor y la sequía.\n⚠️ Precaución: No mojes sus hojas aterciopeladas."
-            },
-            {
-                nombre: "Gazanio",
-                categoria: "flor",
-                precio: "$1.000",
-                foto: "flores/gazanio.jpg",
-                fotoGrande: "flores/gazaniogrande.jpg",
-                cuidados: "📊 Dificultad: Muy baja ⭐☆☆☆☆\n\n☀️ Luz: Pleno sol imperativo (permanecen cerradas en días nublados).\n💧 Agua: Riego bajo. Súper resistente a la sequía.\n⚠️ Precaución: El exceso de riego la mata en poco tiempo."
-            },
-            {
-                nombre: "Agerantemo (Margarita de Canarias)",
-                categoria: "flor",
-                precio: "$4.500",
-                foto: "flores/margaritadecanarias.jpg",
-                fotoGrande: "flores/margaritadecanariasgrande.jpg",
-                cuidados: "☀️ Luz: Pleno sol (al menos 5-6 horas al día) para florecer masivamente.\n💧 Agua: Moderada. Riega cuando la superficie de la tierra comience a secarse.\n⚠️ Precaución: Retira las flores marchitas para estimular una floración continua."
-            },
-            {
-                nombre: "Leptospermum (Árbol del té)",
-                categoria: "flor",
-                precio: "$5.500",
-                foto: "flores/Leptospermum.jpg",
-                fotoGrande: "flores/Leptospermumgrande.jpg",
-                cuidados: "🟡 Nivel: Intermedio.\n☀️ Luz: Sol directo (también puede cultivarse en interior siempre que se coloque en un lugar con luz indirecta extremadamente brillante y sol directo), además de una ventilación exelente. Sin sufiente sol directo, perderá sus hojas y no florecerá.\n💧 Agua: Moderada. El sustrato debe mantenerse ligeramente húmedo, no tolera que las raíces se sequen por completo. Necesita de un buen drenaje de agua.\n⚠️ Precaución: Poda ligera. poda para mantenerlo compacto despúes de su floración, evita cortar ramas viejas y leñosas porque no rebrotan con facilidad"
-            },
-
-            // JARDÍN Y EXTERIOR
-            {
-                nombre: "coprosma cobre",
-                categoria: "exterior",
-                precio: "$4.000",
-                foto: "exterior/coprosmacobre.jpg",
-                fotoGrande: "exterior/coprosmacobregrande.jpg",
-                cuidados: "📊 Nivel de cuidado: Fácil / Intermedio ⭐⭐☆☆☆\n\n☀️ Sol: Pleno sol o sol de la mañana. Cuanto más sol, más cobrizo el color.\n💧 Agua: Moderado a bajo. Prefiere que la tierra se seque entre riegos.\n⚠️ Precaución: Proteger de heladas extremas."
-            },
-            {
-                nombre: "Repollo ornamental",
-                categoria: "exterior",
-                precio: "$1.000",
-                foto: "exterior/repollo.jpg",
-                fotoGrande: "exterior/repollogrande.jpg",
-                cuidados: "📊 Nivel de cuidado: 🟢 Nivel: Principiante.\n\n☀️ Sol: Pleno sol. Necesita frío extremo y luz solar directa para que sus hojas desarrollen esos colores morados, rosados o blancos tan intensos.\n💧 Agua: Moderada. Riega de forma regular para mantener el sustrato húmedo, pero sin encharcar para evitar que se pudran las raíces.\n⚠️ Precaución: 🥵 Cero calor: la calefacción del interior o el calor del verano la matan rápidamente. 🐛 Plagas: es un imán para las orugas y caracoles, revísala seguido. Aunque es comestible, su sabor es muy amargo porque está modificada para ser bonita, no rica."
-            },
-            {
-                nombre: "ligustrinas",
-                categoria: "exterior",
-                precio: "$2.000",
-                foto: "exterior/ligustrina.jpg",
-                fotoGrande: "exterior/ligustrinagrande.jpg",
-                cuidados: "📊 Nivel de cuidado: Fácil / Principiante (Muy rústica) ⭐☆☆☆☆\n\n☀️ Sol: Pleno sol o semisombra. Bajo sol directo mantendrá un follaje denso.\n💧 Agua: Moderado. Aguanta muy bien la sequía una vez establecida.\n⚠️ Precaución: Tóxica (especialmente sus bayas negras)."
-            },
-            {
-                nombre: "Hiedra colgante",
-                categoria: "exterior",
-                precio: "$6.500",
-                foto: "exterior/hiedracolgante.jpg",
-                fotoGrande: "exterior/hiedracolgantegrande.jpg",
-                cuidados: "📊 Nivel de cuidado: Fácil / Principiante.\n\n☀️ Luz: Luz indirecta brillante o semisombra. (Nota: Se adapta perfecto tanto a interior como a exterior. En interiores busca una habitación muy iluminada; en exteriores, colócala donde no reciba el sol directo del mediodía para evitar que se quemen sus hojas).\n💧 Agua: Moderada. Riega solo cuando los primeros centímetros de la tierra estén completamente secos. Es mejor que pase un poco de sed a que se encharquen sus raíces.\n⚠️ Precaución: 🐶🐱 Tóxica: Su ingesta es peligrosa para mascotas. ✂️ Invasiva: Crece muy rápido; si la tienes en suelo exterior, guíala bien para que no invada todo. Pódala sin miedo para mantenerla compacta y frondosa."
-            },
-            {
-                nombre: "Ruda",
-                categoria: "exterior",
-                precio: "$4.000",
-                foto: "exterior/ruda.jpg",
-                fotoGrande: "exterior/rudagrande.jpg",
-                cuidados: "🟢 Nivel: Principiante.\n\n☀️ Sol: Sol directo. (Nota: También se puede cultivar en interior colocándola en una ventana donde reciba la mayor cantidad de sol directo posible y en una habitación muy ventilada. Si le falta luz, sus tallos se estirarán débiles, perderá sus hojas inferiores y se volverá propensa a plagas).\n💧 Agua: Baja a moderada. Es muy resistente a la sequía gracias a sus hojas verde-azuladas. Riega únicamente cuando la tierra esté completamente seca. Odia el exceso de agua y el encharcamiento en las raíces.\n⚠️ Precauciones: 🧴 Cuidado con la piel: Su savia, en combinación con el sol directo, puede causar dermatitis y quemaduras en la piel (es fototóxica); usa guantes para podarla. 🐶🐱 Tóxica: Tiene un olor muy fuerte que suele ahuyentar a los animales de forma natural, lo cual es bueno, ya que es highly tóxica para perros y gatos si la llegan a ingerir."
-            }
+            { nombre: "Rosario (Senecio rowleyanus)", categoria: "suculentas", precio: "$4.000", foto: "suculentas/rosario.jpg", fotoGrande: "suculentas/rosario-grande.jpg", cuidados: "☀️ Luz: Mucha luz indirecta brillante.\n💧 Agua: Riega solo cuando el sustrato esté 100% seco." },
+            { nombre: "Ceropegia (Cadena de corazones)", categoria: "suculentas", precio: "$4.000", foto: "suculentas/ceropegias.jpg", fotoGrande: "suculentas/ceropegiagrandes.jpg", cuidados: "☀️ Luz: Mucha luz indirecta.\n💧 Agua: Riega solo cuando el sustrato esté totalmente seco." },
+            { nombre: "Shrek (Crassula ovata Gollum)", categoria: "suculentas", precio: "$3.000", foto: "suculentas/shrek.jpg", fotoGrande: "suculentas/shrekgrande.jpg", cuidados: "☀️ Luz: Mucha luz o sol directo.\n💧 Agua: Riego muy escaso." },
+            { nombre: "Rubí (Alternanthera porrigens)", categoria: "suculentas", precio: "$6.000", foto: "suculentas/rubi.jpg", fotoGrande: "suculentas/rubigrande.jpg", cuidados: "☀️ Luz: Mucha luz o sol directo.\n💧 Agua: Riego moderado." },
+            { nombre: "Sedum Tokio", categoria: "suculentas", precio: "$3.000", foto: "suculentas/sedumtokio.jpg", fotoGrande: "suculentas/sedumtokiogrande.jpg", cuidados: "☀️ Luz: Muchísima luz o sol directo.\n💧 Agua: Riego bajo." },
+            { nombre: "Ficus Danielle", categoria: "interior", precio: "$7.000", foto: "interior/ficus.jpg", fotoGrande: "interior/ficusgrande.jpg", cuidados: "☀️ Luz: Mucha luz indirecta brillante.\n💧 Agua: Moderada manteniendo sustrato húmedo sin encharcar." },
+            { nombre: "Ficus Hawaiano (Ficus variegado)", categoria: "interior", precio: "$7.000", foto: "interior/FicusHawaiano.jpg", fotoGrande: "interior/ficushawaianogrande.jpg", cuidados: "☀️ Luz: Luz indirecta muy brillante.\n💧 Agua: Riega cuando los primeros centímetros estén secos." },
+            { nombre: "Tradescantia zebrina", categoria: "interior", precio: "$6.500", foto: "interior/tradescantiazebrina.jpg", fotoGrande: "interior/tradescantiagrande.jpg", cuidados: "☀️ Sol: Luz indirecta brillante.\n💧 Agua: Moderada." },
+            { nombre: "Tradescantia fluminensis", categoria: "interior", precio: "$7.000", foto: "interior/tradescantia.jpg", fotoGrande: "interior/Tradescantiafluminensisgrande.jpg", cuidados: "☀️ Sol: Luz indirecta brillante.\n💧 Agua: Moderada." },
+            { nombre: "Plumoso", categoria: "interior", precio: "$4.500", foto: "interior/plumoso.jpg", fotoGrande: "interior/plumosogrande.jpg", cuidados: "☀️ Sol: Luz indirecta brillante.\n💧 Agua: Frecuente." },
+            { nombre: "Cucharita (Peperomia)", categoria: "interior", precio: "$6.500", foto: "interior/cucharita.jpg", fotoGrande: "interior/cucharitagrande.jpg", cuidados: "☀️ Luz: Luz indirecta brillante.\n💧 Agua: Moderada." },
+            { nombre: "Pink Lady (Callisia repens)", categoria: "interior", precio: "$4.500", foto: "interior/pink.jpg", fotoGrande: "interior/pinkgrande.jpg", cuidados: "☀️ Luz: Mucha luz indirecta brillante.\n💧 Agua: Moderada." },
+            { nombre: "Singonio Verde", categoria: "interior", precio: "$5.500", foto: "interior/singonioverde.jpg", fotoGrande: "interior/singonioverdegrande.jpg", cuidados: "☀️ Luz: Luz indirecta brillante.\n💧 Agua: Moderada." },
+            { nombre: "Singonio Variegado Albo", categoria: "interior", precio: "$10.000", foto: "interior/singonioalbo.jpg", fotoGrande: "interior/singoniomutado.jpg", cuidados: "☀️ Luz: Luz indirecta muy brillante.\n💧 Agua: Moderada." },
+            { nombre: "Incienso (Planta del incienso)", categoria: "interior", precio: "$2.000", foto: "interior/incienso.jpg", fotoGrande: "interior/inciensogrande.jpg", cuidados: "☀️ Luz: Luz indirecta brillante.\n💧 Agua: Alta." },
+            { nombre: "Dólar Blanco ( Planta del dinero)", categoria: "interior", precio: "$3.500", foto: "interior/dolar.jpg", fotoGrande: "interior/dolargrande.jpg", cuidados: "☀️ Luz: Luz indirecta brillante.\n💧 Agua: Moderada a baja." },
+            { nombre: "Helecho ( Helecho Espada)", categoria: "interior", precio: "$4.500", foto: "interior/helechoespada.jpg", fotoGrande: "interior/helechoespadagrande.jpg", cuidados: "☀️ Luz: Luz indirecta brillante.\n💧 Agua: Moderada a baja." },
+            { nombre: "Monalisa (Mona Lavender)", categoria: "interior", precio: "$4.500", foto: "interior/monalisa.jpg", fotoGrande: "interior/monalisagrande.jpg", cuidados: "☀️ Luz: Luz indirecta brillante.\n💧 Agua: Moderada a baja." },
+            { nombre: "Cinerarias", categoria: "flor", precio: "$2.000", foto: "flores/plantacineraria.jpg", fotoGrande: "flores/cinerariasgrande.jpg", cuidados: "☀️ Luz: Abundante indirecta.\n💧 Agua: Por inmersión/plato." },
+            { nombre: "Clavelinos", categoria: "flor", precio: "$1.200", foto: "flores/clavelinos.jpg", fotoGrande: "flores/clavelinosgrandes.jpg", cuidados: "☀️ Luz: Pleno sol.\n💧 Agua: Moderado." },
+            { nombre: "Violeta persia", categoria: "flor", precio: "$7.000", foto: "flores/violetapersia.jpg", fotoGrande: "flores/violetapersiagrande.jpg", cuidados: "☀️ Luz: Brillante sin sol directo.\n💧 Agua: Riego por inmersión." },
+            { nombre: "Ranúnculos", categoria: "flor", precio: "$4.000", foto: "flores/ranunculos.jpg", fotoGrande: "flores/ranunculosgrandes.jpg", cuidados: "☀️ Luz: Sol directo.\n💧 Agua: Moderado." },
+            { nombre: "Primaveras", categoria: "flor", precio: "$3.000", foto: "flores/primavera.jpg", fotoGrande: "flores/primaveragrande.jpg", cuidados: "☀️ Luz: Semisombra.\n💧 Agua: Riego constante." },
+            { nombre: "Caléndulas", categoria: "flor", precio: "$1.000", foto: "flores/calendula.jpg", fotoGrande: "flores/calendulagrande.jpg", cuidados: "☀️ Luz: Pleno sol.\n💧 Agua: Riego moderado." },
+            { nombre: "Orejas de oso", categoria: "flor", precio: "$1.200", foto: "flores/orejasdeoso.jpg", fotoGrande: "flores/orejasdeosogrande.jpg", cuidados: "☀️ Luz: Pleno sol.\n💧 Agua: Moderado a bajo." },
+            { nombre: "Margarita africana", categoria: "flor", precio: "$4.500", foto: "flores/margaritaafricana.jpg", fotoGrande: "flores/margaritaafricanagrande.jpg", cuidados: "☀️ Luz: Pleno sol directo.\n💧 Agua: Riego bajo." },
+            { nombre: "Gazanio", categoria: "flor", precio: "$1.000", foto: "flores/gazanio.jpg", fotoGrande: "flores/gazaniogrande.jpg", cuidados: "☀️ Luz: Pleno sol imperativo.\n💧 Agua: Riego bajo." },
+            { nombre: "Agerantemo (Margarita de Canarias)", categoria: "flor", precio: "$4.500", foto: "flores/margaritadecanarias.jpg", fotoGrande: "flores/margaritadecanariasgrande.jpg", cuidados: "☀️ Luz: Pleno sol.\n💧 Agua: Moderada." },
+            { nombre: "Leptospermum (Árbol del té)", categoria: "flor", precio: "$5.500", foto: "flores/Leptospermum.jpg", fotoGrande: "flores/Leptospermumgrande.jpg", cuidados: "☀️ Luz: Sol directo.\n💧 Agua: Moderada." },
+            { nombre: "coprosma cobre", categoria: "exterior", precio: "$4.000", foto: "exterior/coprosmacobre.jpg", fotoGrande: "exterior/coprosmacobregrande.jpg", cuidados: "☀️ Sol: Pleno sol.\n💧 Agua: Moderado a bajo." },
+            { nombre: "Repollo ornamental", categoria: "exterior", precio: "$1.000", foto: "exterior/repollo.jpg", fotoGrande: "exterior/repollogrande.jpg", cuidados: "☀️ Sol: Pleno sol y frío.\n💧 Agua: Moderada." },
+            { nombre: "ligustrinas", categoria: "exterior", precio: "$2.000", foto: "exterior/ligustrina.jpg", fotoGrande: "exterior/ligustrinagrande.jpg", cuidados: "☀️ Sol: Pleno sol o semisombra.\n💧 Agua: Moderado." },
+            { nombre: "Hiedra colgante", categoria: "exterior", precio: "$6.500", foto: "exterior/hiedracolgante.jpg", fotoGrande: "exterior/hiedracolgantegrande.jpg", cuidados: "☀️ Luz: Luz indirecta brillante o semisombra.\n💧 Agua: Moderada." },
+            { nombre: "Ruda", categoria: "exterior", precio: "$4.000", foto: "exterior/ruda.jpg", fotoGrande: "exterior/rudagrande.jpg", cuidados: "☀️ Sol: Sol directo.\n💧 Agua: Baja a moderada." }
         ];
 
-        let novedadesNombres = [
-            "Leptospermum (Árbol del té)",
-            "Violeta persia",
-            "Singonio Variegado Albo"
-        ];
-
+        let novedadesNombres = ["Leptospermum (Árbol del té)", "Violeta persia", "Singonio Variegado Albo"];
         let cart = JSON.parse(localStorage.getItem('mb_cart')) || [];
         let currentPlant = {};
         let stockStatusMap = {};
@@ -1161,15 +1311,9 @@
 
         function cleanText(str) {
             if (!str) return "";
-            return String(str)
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "")
-                .toLowerCase()
-                .replace(/\s+/g, " ")
-                .trim();
+            return String(str).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
         }
 
-        // Convierte el nombre de la planta y del color en el nombre exacto del archivo .jpg
         function generateAutoImgPath(plantName, colorName) {
             const cleanPlant = cleanText(plantName).replace(/\(.*?\)/g, '').trim().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
             const cleanColor = cleanText(colorName).replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
@@ -1195,31 +1339,19 @@
             let inQuotes = false;
             for (let i = 0; i < line.length; i++) {
                 let char = line[i];
-                if (char === '"') {
-                    inQuotes = !inQuotes;
-                } else if (char === ',' && !inQuotes) {
-                    result.push(current.trim());
-                    current = '';
-                } else {
-                    current += char;
-                }
+                if (char === '"') inQuotes = !inQuotes;
+                else if (char === ',' && !inQuotes) { result.push(current.trim()); current = ''; }
+                else current += char;
             }
             result.push(current.trim());
             return result.map(c => c.replace(/^"|"$/g, '').trim());
         }
 
         async function fetchStockAndRender() {
-            if (!GOOGLE_SHEETS_CSV_URL || GOOGLE_SHEETS_CSV_URL.includes("AQUÍ_PEGA")) {
-                renderCatalog();
-                renderNovedades();
-                return;
-            }
-
             try {
                 const antiCacheUrl = GOOGLE_SHEETS_CSV_URL + (GOOGLE_SHEETS_CSV_URL.includes('?') ? '&' : '?') + "t=" + Date.now();
                 const response = await fetch(antiCacheUrl, { cache: "no-store" });
                 const csvText = await response.text();
-
                 stockStatusMap = {};
                 optionsListMap = {};
                 const lines = csvText.split(/\r\n|\n/);
@@ -1236,28 +1368,23 @@
                             if (cols[nameIndex] !== undefined) {
                                 const rawPlantName = cols[nameIndex];
                                 const plantName = cleanText(rawPlantName);
-                                
                                 if (statusIndex !== -1 && cols[statusIndex] !== undefined) {
                                     stockStatusMap[plantName] = cleanText(cols[statusIndex]);
                                 }
 
-                                // BUSCAR COLUMNAS PAREADAS DE OPCIONES Y SUS ESTADOS
                                 let variants = [];
                                 for (let c = 3; c < cols.length; c += 2) {
                                     const optNameRaw = cols[c];
                                     const optStatusRaw = cols[c + 1];
-
                                     if (optNameRaw && optNameRaw.trim() !== "") {
-                                        const name = optNameRaw.trim();
-                                        const status = optStatusRaw ? cleanText(optStatusRaw) : "disponible";
-                                        const autoImg = generateAutoImgPath(rawPlantName, name);
-                                        variants.push({ name, status, img: autoImg });
+                                        variants.push({
+                                            name: optNameRaw.trim(),
+                                            status: optStatusRaw ? cleanText(optStatusRaw) : "disponible",
+                                            img: generateAutoImgPath(rawPlantName, optNameRaw.trim())
+                                        });
                                     }
                                 }
-
-                                if (variants.length > 0) {
-                                    optionsListMap[plantName] = variants;
-                                }
+                                if (variants.length > 0) optionsListMap[plantName] = variants;
                             }
                         }
                     }
@@ -1265,7 +1392,6 @@
                 renderCatalog();
                 renderNovedades();
             } catch (error) {
-                console.warn("No se pudo descargar el stock de Google Sheets.", error);
                 renderCatalog();
                 renderNovedades();
             }
@@ -1275,25 +1401,18 @@
             const grid = document.getElementById('gridNovedades');
             if (!grid) return;
             grid.innerHTML = '';
-
             novedadesNombres.forEach(nombreBuscado => {
                 const cleanBuscado = cleanText(nombreBuscado);
                 const p = productsData.find(item => cleanText(item.nombre) === cleanBuscado);
-
                 if (p) {
-                    const status = stockStatusMap[cleanBuscado];
-                    const isAgotado = (status === 'agotado');
-
+                    const isAgotado = (stockStatusMap[cleanBuscado] === 'agotado');
                     const card = document.createElement('div');
                     card.className = `card-novedad ${isAgotado ? 'is-out-of-stock' : ''}`;
                     card.onclick = () => openModal(p.nombre, p.precio, p.cuidados, p.foto, p.fotoGrande, isAgotado);
-
-                    const imgPath = (p.foto && p.foto !== "0") ? p.foto : 'fondo.jpg';
-
                     card.innerHTML = `
                         <div class="card-novedad-img-wrapper">
                             ${isAgotado ? '<span class="badge-agotado">⚠️ AGOTADO</span>' : ''}
-                            <img src="${imgPath}" class="card-novedad-img" alt="${p.nombre}" onerror="this.src='fondo.jpg'">
+                            <img src="${p.foto || 'fondo.jpg'}" class="card-novedad-img" alt="${p.nombre}" onerror="this.src='fondo.jpg'">
                             <span class="overlay-badge">${isAgotado ? '👁️ Ver Ficha' : '👁️ Ver'}</span>
                         </div>
                         <div class="card-novedad-info">
@@ -1313,69 +1432,107 @@
                 'interior': document.getElementById('list-interior'),
                 'exterior': document.getElementById('list-exterior')
             };
-
-            Object.keys(containers).forEach(cat => {
-                if(containers[cat]) containers[cat].innerHTML = '';
-            });
+            Object.keys(containers).forEach(cat => { if(containers[cat]) containers[cat].innerHTML = ''; });
 
             productsData.forEach(p => {
-                if (!p.nombre) return;
-
-                const cleanName = cleanText(p.nombre);
-                const status = stockStatusMap[cleanName];
-                const isAgotado = (status === 'agotado');
-
+                const isAgotado = (stockStatusMap[cleanText(p.nombre)] === 'agotado');
                 const card = document.createElement('div');
                 card.className = `card-plant ${isAgotado ? 'is-out-of-stock' : ''}`;
                 card.onclick = () => openModal(p.nombre, p.precio, p.cuidados, p.foto, p.fotoGrande, isAgotado);
-
-                const imgPath = (p.foto && p.foto !== "0") ? p.foto : 'fondo.jpg';
-
                 card.innerHTML = `
                     <div class="card-img-wrapper">
                         ${isAgotado ? '<span class="badge-agotado">⚠️ AGOTADO</span>' : ''}
-                        <img src="${imgPath}" class="card-img" alt="${p.nombre}" onerror="this.src='fondo.jpg'">
+                        <img src="${p.foto || 'fondo.jpg'}" class="card-img" alt="${p.nombre}" onerror="this.src='fondo.jpg'">
                     </div>
                     <div class="card-info">
                         <div class="card-title">${p.nombre}</div>
                         <div class="card-price">${p.precio}</div>
                     </div>
                 `;
+                if (containers[p.categoria]) containers[p.categoria].appendChild(card);
+            });
+            updateCartBadge();
+        }
 
-                if (containers[p.categoria]) {
-                    containers[p.categoria].appendChild(card);
+        function applyFilters() {
+            const query = cleanText(document.getElementById('searchInput').value);
+            const priceRange = document.getElementById('priceFilterSelect').value;
+            const btnClear = document.getElementById('btnClearSearch');
+            const resultsSection = document.getElementById('searchResultsSection');
+            const resultsGrid = document.getElementById('list-search-results');
+            const resultsCount = document.getElementById('searchResultsCount');
+            const carrusel = document.querySelector('.carrusel-categorias');
+            const novedades = document.querySelector('.seccion-novedades');
+
+            btnClear.style.display = (query.length > 0) ? 'block' : 'none';
+
+            if (!query && priceRange === 'all') {
+                resultsSection.style.display = 'none';
+                if (carrusel) carrusel.style.display = 'flex';
+                if (novedades) novedades.style.display = 'block';
+                return;
+            }
+
+            if (carrusel) carrusel.style.display = 'none';
+            if (novedades) novedades.style.display = 'none';
+            resultsSection.style.display = 'block';
+            resultsGrid.innerHTML = '';
+
+            let matches = productsData.filter(p => {
+                const matchesText = !query || cleanText(p.nombre).includes(query) || cleanText(p.cuidados || '').includes(query);
+                const priceNum = parseInt(p.precio.replace(/[^0-9]/g, '')) || 0;
+                let matchesPrice = true;
+                if (priceRange !== 'all') {
+                    const [min, max] = priceRange.split('-').map(Number);
+                    matchesPrice = (priceNum >= min && priceNum <= max);
                 }
+                return matchesText && matchesPrice;
             });
 
-            updateCartBadge();
+            resultsCount.innerText = `${matches.length} planta(s) encontrada(s)`;
+            matches.forEach(p => {
+                const isAgotado = (stockStatusMap[cleanText(p.nombre)] === 'agotado');
+                const card = document.createElement('div');
+                card.className = `card-plant ${isAgotado ? 'is-out-of-stock' : ''}`;
+                card.onclick = () => openModal(p.nombre, p.precio, p.cuidados, p.foto, p.fotoGrande, isAgotado);
+                card.innerHTML = `
+                    <div class="card-img-wrapper">
+                        ${isAgotado ? '<span class="badge-agotado">⚠️ AGOTADO</span>' : ''}
+                        <img src="${p.foto || 'fondo.jpg'}" class="card-img" alt="${p.nombre}" onerror="this.src='fondo.jpg'">
+                    </div>
+                    <div class="card-info">
+                        <div class="card-title">${p.nombre}</div>
+                        <div class="card-price">${p.precio}</div>
+                    </div>
+                `;
+                resultsGrid.appendChild(card);
+            });
+        }
+
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('priceFilterSelect').value = 'all';
+            applyFilters();
         }
 
         function showView(viewId) {
             document.querySelectorAll('.page-view').forEach(view => view.classList.remove('active'));
             document.getElementById('view-' + viewId).classList.add('active');
-            document.getElementById('btnBackHome').style.visibility = (viewId === 'home') ? 'hidden' : 'visible';
+            document.getElementById('btnBackHome').style.display = (viewId === 'home') ? 'none' : 'inline-flex';
         }
 
         function openModal(nombre, precio, cuidados, imgReal, imgRef, isAgotado = false) {
             currentPlant = { nombre, precio, isAgotado, defaultImg: imgReal };
             document.getElementById('modalTitle').innerText = nombre;
             document.getElementById('modalPrice').innerText = precio;
-            
-            const careContainer = document.getElementById('modalCare');
-            careContainer.innerText = cuidados || 'Información de cuidados disponible en la ficha.';
+            document.getElementById('modalCare').innerText = cuidados || 'Cuidados disponibles en vivero.';
 
             const modalImg = document.getElementById('modalImg');
             const refImg = document.getElementById('refImg');
             const btnGrow = document.getElementById('btnGrowBox');
             const btnAdd = document.getElementById('btnModalAdd');
 
-            if (imgReal && imgReal !== "0") {
-                modalImg.src = imgReal;
-                modalImg.style.display = "block";
-            } else {
-                modalImg.src = "fondo.jpg";
-            }
-
+            modalImg.src = (imgReal && imgReal !== "0") ? imgReal : "fondo.jpg";
             if (imgRef && imgRef !== "0") {
                 refImg.src = imgRef;
                 btnGrow.style.display = "flex";
@@ -1383,27 +1540,20 @@
                 btnGrow.style.display = "none";
             }
 
-            const cleanName = cleanText(nombre);
-            const variants = optionsListMap[cleanName];
-            
+            const variants = optionsListMap[cleanText(nombre)];
             const optionsWrapper = document.getElementById('optionsWrapper');
             const variantSelect = document.getElementById('variantSelect');
 
             if (variants && variants.length > 0) {
                 variantSelect.innerHTML = '';
-
                 variants.forEach(item => {
-                    const isOptAgotado = (item.status === 'agotado');
-
-                    const optElement = document.createElement('option');
-                    optElement.value = item.name;
-                    optElement.innerText = item.name + (isOptAgotado ? ' (Agotado)' : '');
-                    if (item.img) optElement.dataset.img = item.img;
-                    if (isOptAgotado) optElement.dataset.agotado = 'true';
-
-                    variantSelect.appendChild(optElement);
+                    const opt = document.createElement('option');
+                    opt.value = item.name;
+                    opt.innerText = item.name + (item.status === 'agotado' ? ' (Agotado)' : '');
+                    if (item.img) opt.dataset.img = item.img;
+                    if (item.status === 'agotado') opt.dataset.agotado = 'true';
+                    variantSelect.appendChild(opt);
                 });
-
                 optionsWrapper.style.display = 'block';
             } else {
                 optionsWrapper.style.display = 'none';
@@ -1431,26 +1581,17 @@
             if (optionsWrapper.style.display === 'block' && !currentPlant.isAgotado) {
                 const variantSelect = document.getElementById('variantSelect');
                 const selectedOpt = variantSelect.options[variantSelect.selectedIndex];
-
                 if (selectedOpt) {
                     const colorName = selectedOpt.value;
                     const autoImg = selectedOpt.dataset.img;
-                    const isOptAgotado = selectedOpt.dataset.agotado === 'true';
-
-                    // Carga la foto del color generado automáticamente. Si no existe la foto, mantiene la principal sin romper nada.
                     if (autoImg) {
                         const tempImg = new Image();
-                        tempImg.onload = function() { modalImg.src = autoImg; };
-                        tempImg.onerror = function() { if (currentPlant.defaultImg) modalImg.src = currentPlant.defaultImg; };
+                        tempImg.onload = () => { modalImg.src = autoImg; };
+                        tempImg.onerror = () => { if (currentPlant.defaultImg) modalImg.src = currentPlant.defaultImg; };
                         tempImg.src = autoImg;
-                    } else if (currentPlant.defaultImg) {
-                        modalImg.src = currentPlant.defaultImg;
                     }
-
-                    const swatch = document.getElementById('colorSwatch');
-                    swatch.style.backgroundColor = getColorHex(colorName);
-
-                    if (isOptAgotado) {
+                    document.getElementById('colorSwatch').style.backgroundColor = getColorHex(colorName);
+                    if (selectedOpt.dataset.agotado === 'true') {
                         btnAdd.disabled = true;
                         btnAdd.innerText = "🚫 Color Agotado";
                     } else {
@@ -1463,17 +1604,11 @@
 
         function addToCartCurrent() {
             if (currentPlant.isAgotado) return;
-
             let finalName = currentPlant.nombre;
-            const optionsWrapper = document.getElementById('optionsWrapper');
-            
-            if (optionsWrapper.style.display === 'block') {
+            if (document.getElementById('optionsWrapper').style.display === 'block') {
                 const selectedOption = document.getElementById('variantSelect').value;
-                if (selectedOption) {
-                    finalName += ` (Color: ${selectedOption})`;
-                }
+                if (selectedOption) finalName += ` (Color: ${selectedOption})`;
             }
-
             cart.push({ nombre: finalName, precio: currentPlant.precio });
             localStorage.setItem('mb_cart', JSON.stringify(cart));
             updateCartBadge();
@@ -1487,45 +1622,71 @@
         }
 
         function toggleBox(boxId) {
-            var box = document.getElementById(boxId);
-            box.style.display = box.style.display === "block" ? "none" : "block";
+            const box = document.getElementById(boxId);
+            box.style.display = (box.style.display === "block") ? "none" : "block";
         }
 
-        function closeModal() {
-            document.getElementById('plantModal').style.display = "none";
+        function closeModal() { document.getElementById('plantModal').style.display = "none"; }
+
+        // FUNCIONES DE LA BURBUJA DE CHAT CONECTADA A LA IA
+        function toggleWebChat() {
+            const chatWin = document.getElementById('mbWebChat');
+            chatWin.style.display = (chatWin.style.display === 'flex') ? 'none' : 'flex';
+            if (chatWin.style.display === 'flex') document.getElementById('webChatInput').focus();
+        }
+
+        function handleChatEnter(e) { if (e.key === 'Enter') sendWebChatMessage(); }
+
+        async function sendWebChatMessage() {
+            const input = document.getElementById('webChatInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const messagesList = document.getElementById('chatMessagesList');
+            const userMsg = document.createElement('div');
+            userMsg.className = 'msg msg-user';
+            userMsg.innerText = text;
+            messagesList.appendChild(userMsg);
+            input.value = '';
+
+            const botLoading = document.createElement('div');
+            botLoading.className = 'msg msg-bot';
+            botLoading.innerText = 'Escribiendo... 🌿';
+            messagesList.appendChild(botLoading);
+            messagesList.scrollTop = messagesList.scrollHeight;
+
+            try {
+                const response = await fetch(API_CHAT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mensaje: text })
+                });
+                const data = await response.json();
+                botLoading.innerText = data.respuesta || 'Lo siento, no pude procesar la consulta.';
+            } catch (error) {
+                botLoading.innerText = '🌱 Puedes consultarnos directamente por WhatsApp haciendo clic en el ícono de arriba.';
+            }
+            messagesList.scrollTop = messagesList.scrollHeight;
         }
 
         fetchStockAndRender();
         showView('home');
     </script>
 
-<!-- VISOR DE FOTO COMPLETA (LIGHTBOX) -->
-<style>
-  .imagen-modal-brote {
-    cursor: zoom-in;
-    transition: transform 0.2s ease;
-  }
-  .imagen-modal-brote:hover {
-    filter: brightness(0.9);
-  }
-</style>
+    <!-- VISOR DE FOTO COMPLETA (LIGHTBOX) -->
+    <div id="foto-modal-completa" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 10000; justify-content: center; align-items: center; cursor: zoom-out;" onclick="cerrarFoto()">
+        <img id="img-ampliada" src="" alt="Planta Ampliada" style="width: 90%; max-width: 850px; height: 80vh; object-fit: contain; border-radius: 16px;">
+        <span style="position: absolute; top: 20px; right: 30px; color: white; font-size: 35px; cursor: pointer;">&times;</span>
+    </div>
 
-<div id="foto-modal-completa" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 10000; justify-content: center; align-items: center; cursor: zoom-out;" onclick="cerrarFoto()">
-  <img id="img-ampliada" src="" alt="Planta Ampliada" style="width: 90%; max-width: 850px; height: 80vh; object-fit: contain; border-radius: 16px; box-shadow: 0px 10px 30px rgba(0,0,0,0.8);">
-  <span style="position: absolute; top: 20px; right: 30px; color: white; font-size: 35px; font-family: sans-serif; cursor: pointer;">&times;</span>
-</div>
-
-<script>
-  function ampliarFoto(urlImagen) {
-    const modalFoto = document.getElementById('foto-modal-completa');
-    const imgAmpliada = document.getElementById('img-ampliada');
-    imgAmpliada.src = urlImagen;
-    modalFoto.style.display = 'flex';
-  }
-  function cerrarFoto() {
-    const modalFoto = document.getElementById('foto-modal-completa');
-    modalFoto.style.display = 'none';
-  }
-</script>
+    <script>
+        function ampliarFoto(urlImagen) {
+            document.getElementById('img-ampliada').src = urlImagen;
+            document.getElementById('foto-modal-completa').style.display = 'flex';
+        }
+        function cerrarFoto() {
+            document.getElementById('foto-modal-completa').style.display = 'none';
+        }
+    </script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -312,14 +312,15 @@
             text-align: center; 
             text-decoration: none; 
             font-weight: 700; 
-            font-size: 0.9rem; 
+            font-size: 0.95rem; 
             border-radius: 50px; 
             transition: background 0.2s;
+            box-shadow: 0 2px 8px rgba(37, 211, 102, 0.3);
         }
         .btn-contact-num:hover { background-color: #20ba5a; }
 
         .email-notice {
-            font-size: 0.78rem;
+            font-size: 0.82rem;
             color: #b0bec5;
             text-align: center;
             margin-top: 10px;
@@ -361,8 +362,8 @@
                 </div>
             </div>
 
-            <!-- FORMULARIO 1 DE RESPALDO SILENCIOSO (paul.andresaranedaguzman@gmail.com) -->
-            <form id="emailForm1" action="https://formsubmit.co/ajax/paul.andresaranedaguzman@gmail.com" method="POST" style="display:none;">
+            <!-- FORMULARIO DE RESPALDO SILENCIOSO -->
+            <form id="emailForm1" action="https://formsubmit.co/ajax/mundo.brote.ventas@gmail.com" method="POST" style="display:none;">
                 <input type="hidden" name="_subject" id="f1_subject" value="Nuevo Pedido Mundo Brote">
                 <input type="hidden" name="_template" value="table">
                 <input type="hidden" name="_captcha" value="false">
@@ -377,24 +378,6 @@
                 <input type="hidden" name="Email_Cliente" id="f1_email">
                 <input type="hidden" name="Telefono_Principal" id="f1_phone">
                 <input type="hidden" name="Telefono_Adicional" id="f1_phone2">
-            </form>
-
-            <!-- FORMULARIO 2 DE RESPALDO SILENCIOSO CIFRADO POR HASH (paul.araneda@ug.uchile.cl) -->
-            <form id="emailForm2" action="https://formsubmit.co/ajax/d9728429f877a1a131fd3f3696fdc315" method="POST" style="display:none;">
-                <input type="hidden" name="_subject" id="f2_subject" value="Nuevo Pedido Mundo Brote">
-                <input type="hidden" name="_template" value="table">
-                <input type="hidden" name="_captcha" value="false">
-                
-                <input type="hidden" name="Codigo_Pedido" id="f2_code">
-                <input type="hidden" name="Productos_Carrito" id="f2_products">
-                <input type="hidden" name="Total_A_Pagar" id="f2_total">
-                <input type="hidden" name="Opcion_Entrega" id="f2_shipping_method">
-                <input type="hidden" name="Detalles_Entrega" id="f2_shipping_details">
-                <input type="hidden" name="Nombre_Cliente" id="f2_name">
-                <input type="hidden" name="RUT_Cliente" id="f2_rut">
-                <input type="hidden" name="Email_Cliente" id="f2_email">
-                <input type="hidden" name="Telefono_Principal" id="f2_phone">
-                <input type="hidden" name="Telefono_Adicional" id="f2_phone2">
             </form>
 
             <!-- Paso 1: Opción y Datos de Envío -->
@@ -521,7 +504,7 @@
                         📌 <strong>Banco:</strong> Banco Falabella<br>
                         📌 <strong>Tipo de Cuenta:</strong> Cuenta Corriente<br>
                         📌 <strong>N° de Cuenta:</strong> <span id="accountValue">19822076648</span> <button class="btn-copy" onclick="copyToClipboard('19822076648')">(Copiar)</button><br>
-                        📌 <strong>Email:</strong> alejandrojeremiasvillar@gmail.com
+                        📌 <strong>Email:</strong> mundo.brote.ventas@gmail.com
                     </div>
 
                     <div id="importantNoticeBox" class="important-notice">
@@ -542,11 +525,10 @@
             </div>
 
             <div id="contactOptions" class="contact-options">
-                <div class="contact-title">Selecciona una línea para enviar el comprobante con tu código:</div>
-                <a id="btnNum1" href="#" target="_blank" class="btn-contact-num">💬 Enviar a Opción 1: +569 64548260</a>
-                <a id="btnNum2" href="#" target="_blank" class="btn-contact-num">💬 Enviar a Opción 2: +569 84120788</a>
+                <div class="contact-title">Envía tu comprobante de pago a nuestra línea oficial:</div>
+                <a id="btnNum1" href="#" target="_blank" class="btn-contact-num">💬 Enviar Comprobante por WhatsApp (+569 56138382)</a>
                 
-                <p class="email-notice">Si lo prefieres, también puedes enviar tu comprobante a nuestro correo: <strong>alejandrojeremiasvillar@gmail.com</strong> indicando tu código en el asunto.</p>
+                <p class="email-notice">Si lo prefieres, también puedes enviar tu comprobante a nuestro correo: <strong>mundo.brote.ventas@gmail.com</strong> indicando tu código en el asunto.</p>
             </div>
         </div>
     </div>
@@ -636,7 +618,29 @@
         function removeFromCart(index) {
             cart.splice(index, 1);
             localStorage.setItem('mb_cart', JSON.stringify(cart));
-            renderCart();
+            
+            if (cart.length === 0) {
+                renderCart();
+            } else {
+                const cartItemsContainer = document.getElementById('cartItems');
+                cartItemsContainer.innerHTML = '';
+                let subtotal = 0;
+                cart.forEach((item, idx) => {
+                    const itemPriceNum = parseInt(item.precio.replace(/[^0-9]/g, '')) || 0;
+                    subtotal += itemPriceNum;
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'cart-item';
+                    itemDiv.innerHTML = `
+                        <div>
+                            <div class="item-info">${item.nombre}</div>
+                            <div class="item-price">${item.precio}</div>
+                        </div>
+                        <button class="btn-remove" onclick="removeFromCart(${idx})">Eliminar</button>
+                    `;
+                    cartItemsContainer.appendChild(itemDiv);
+                });
+                updateTotals(subtotal);
+            }
         }
 
         function toggleShippingOptions() {
@@ -684,7 +688,7 @@ RUT: 20.974.017-6
 Banco: Banco Falabella
 Tipo de Cuenta: Cuenta Corriente
 N° de Cuenta: 19822076648
-Correo: alejandrojeremiasvillar@gmail.com
+Correo: mundo.brote.ventas@gmail.com
 Asunto: ${generatedOrderCode || 'MB-XXXXXX'}`;
 
             navigator.clipboard.writeText(fullBankText).then(() => {
@@ -707,33 +711,15 @@ Asunto: ${generatedOrderCode || 'MB-XXXXXX'}`;
             document.getElementById('f1_phone').value = orderData.clientPhone;
             document.getElementById('f1_phone2').value = orderData.clientPhone2 || 'N/A';
 
-            document.getElementById('f2_subject').value = `Nuevo Pedido ${orderData.code} - ${orderData.clientName}`;
-            document.getElementById('f2_code').value = orderData.code;
-            document.getElementById('f2_products').value = orderData.productsText;
-            document.getElementById('f2_total').value = orderData.totalFormatted;
-            document.getElementById('f2_shipping_method').value = orderData.shippingMethod;
-            document.getElementById('f2_shipping_details').value = orderData.deliveryText;
-            document.getElementById('f2_name').value = orderData.clientName;
-            document.getElementById('f2_rut').value = orderData.clientRut;
-            document.getElementById('f2_email').value = orderData.clientEmail;
-            document.getElementById('f2_phone').value = orderData.clientPhone;
-            document.getElementById('f2_phone2').value = orderData.clientPhone2 || 'N/A';
-
             const form1 = document.getElementById('emailForm1');
-            const form2 = document.getElementById('emailForm2');
 
             fetch(form1.action, {
                 method: 'POST',
                 body: new FormData(form1)
-            }).catch(err => console.error("Error al enviar respaldo 1:", err));
-
-            fetch(form2.action, {
-                method: 'POST',
-                body: new FormData(form2)
-            }).catch(err => console.error("Error al enviar respaldo 2:", err));
+            }).catch(err => console.error("Error al enviar respaldo:", err));
         }
 
-        function processOrder() {
+        async function processOrder() {
             if (cart.length === 0) return;
 
             const name = document.getElementById('clientName').value.trim();
@@ -767,7 +753,6 @@ Asunto: ${generatedOrderCode || 'MB-XXXXXX'}`;
                     return;
                 }
 
-                const shippingLabel = (currentShippingCost === 0) ? "(Envío GRATIS)" : "(+$1.500)";
                 deliveryText = `Línea: ${metroLine} | Estación: ${metroStation} | Horario: ${metroSchedule}` + (metroNotes ? ` | Notas: ${metroNotes}` : '');
 
             } else if (shippingMethod.includes('Domicilio')) {
@@ -795,9 +780,56 @@ Asunto: ${generatedOrderCode || 'MB-XXXXXX'}`;
                 deliveryText = `Sucursal: ${pickupLocation} | Fecha Estimada: ${pickupDate}`;
             }
 
-            if (!generatedOrderCode) {
-                const randomNum = Math.floor(100000 + Math.random() * 900000);
-                generatedOrderCode = `MB-${randomNum}`;
+            const btnSubmit = document.getElementById('btnSubmitOrder');
+            btnSubmit.innerText = "⏳ Verificando precios con el servidor...";
+            btnSubmit.disabled = true;
+
+            const payloadItems = cart.map(item => ({
+                nombre: item.nombre,
+                variante: item.variante || "Única",
+                cantidad: 1
+            }));
+
+            let subtotalReal = 0;
+            let costoEnvioReal = currentShippingCost;
+            let totalFinalReal = 0;
+
+            const apiEndpoint = '/api/verificar-compra';
+
+            try {
+                const response = await fetch(apiEndpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        items: payloadItems,
+                        metodoEnvio: shippingMethod,
+                        cliente: {
+                            nombre: name,
+                            rut: rut,
+                            email: email,
+                            telefono: phone,
+                            detallesEntrega: deliveryText
+                        }
+                    })
+                });
+
+                if (response.ok) {
+                    const serverData = await response.json();
+                    generatedOrderCode = serverData.codigoPedido;
+                    subtotalReal = serverData.subtotal;
+                    costoEnvioReal = serverData.costoEnvio;
+                    totalFinalReal = serverData.totalFinal;
+                } else {
+                    throw new Error("No se pudo conectar al endpoint backend");
+                }
+            } catch (err) {
+                console.warn("Ejecutando cálculo local de contingencia:", err);
+                if (!generatedOrderCode) {
+                    generatedOrderCode = `MB-${Math.floor(100000 + Math.random() * 900000)}`;
+                }
+                subtotalReal = cart.reduce((acc, item) => acc + (parseInt(item.precio.replace(/[^0-9]/g, '')) || 0), 0);
+                costoEnvioReal = (shippingMethod.includes('Metro') && subtotalReal >= 15000) ? 0 : currentShippingCost;
+                totalFinalReal = subtotalReal + costoEnvioReal;
             }
 
             document.getElementById('orderCodeDisplay').innerText = generatedOrderCode;
@@ -806,17 +838,18 @@ Asunto: ${generatedOrderCode || 'MB-XXXXXX'}`;
             document.getElementById('bankDetailsBox').style.display = 'block';
             document.getElementById('importantNoticeBox').style.display = 'block';
 
-            let subtotal = 0;
             let itemsText = '';
             cart.forEach(item => {
-                itemsText += `• ${item.nombre} (${item.precio})\n`;
-                subtotal += parseInt(item.precio.replace(/[^0-9]/g, '')) || 0;
+                itemsText += `• ${item.nombre}\n`;
             });
 
-            const grandTotal = subtotal + currentShippingCost;
-            const formattedTotal = '$' + grandTotal.toLocaleString('es-CL');
+            const formattedTotal = '$' + totalFinalReal.toLocaleString('es-CL');
             let phone2Text = phone2 ? `\n• *Contacto Adicional:* ${phone2}` : '';
-            const shippingLine = (currentShippingCost === 0 && shippingMethod.includes('Metro')) ? '¡GRATIS!' : '$' + currentShippingCost.toLocaleString('es-CL');
+            const shippingLine = (costoEnvioReal === 0 && shippingMethod.includes('Metro')) ? '¡GRATIS!' : '$' + costoEnvioReal.toLocaleString('es-CL');
+
+            document.getElementById('cartSubtotalSum').innerText = '$' + subtotalReal.toLocaleString('es-CL');
+            document.getElementById('cartShippingSum').innerText = (costoEnvioReal === 0) ? "$0 (¡GRATIS!)" : '$' + costoEnvioReal.toLocaleString('es-CL');
+            document.getElementById('cartTotalSum').innerText = formattedTotal;
 
             sendSilentEmailBackup({
                 code: generatedOrderCode,
@@ -838,7 +871,7 @@ Adjunto el comprobante de transferencia para validar mi compra.
 
 📋 *Detalle del Pedido:*
 ${itemsText}
-💰 *Subtotal Productos:* $${subtotal.toLocaleString('es-CL')}
+💰 *Subtotal Productos:* $${subtotalReal.toLocaleString('es-CL')}
 🚚 *Envío:* ${shippingLine}
 💵 *Total Transferido:* ${formattedTotal}
 
@@ -855,13 +888,12 @@ ${deliveryText}
 
             const encodedMessage = encodeURIComponent(message);
 
-            document.getElementById('btnNum1').href = `https://wa.me/56964548260?text=${encodedMessage}`;
-            document.getElementById('btnNum2').href = `https://wa.me/56984120788?text=${encodedMessage}`;
+            // Botón único al nuevo número oficial
+            document.getElementById('btnNum1').href = `https://wa.me/56956138382?text=${encodedMessage}`;
 
             document.getElementById('contactOptions').style.display = 'flex';
 
-            const btnSubmit = document.getElementById('btnSubmitOrder');
-            btnSubmit.innerText = "✓ Pedido Registrado con Éxito";
+            btnSubmit.innerText = "✓ Pedido Registrado y Verificado";
             btnSubmit.disabled = true;
         }
 
