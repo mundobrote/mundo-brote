@@ -162,7 +162,7 @@
         <h2>🌿 Mundo Brote</h2>
         <p>Panel de Administración de Inventario</p>
         <input type="password" id="adminPassInput" class="login-input" placeholder="Ingresa la contraseña maestra..." onkeydown="if(event.key==='Enter') verifyLogin()">
-        <button class="btn-login" onclick="verifyLogin()">Iniciar Sesión</button>
+        <button type="button" class="btn-login" onclick="verifyLogin()">Iniciar Sesión</button>
     </div>
 
     <!-- VISTA DEL DASHBOARD -->
@@ -247,16 +247,22 @@
     </div>
 
     <script>
-        // CONFIGURACIÓN SUPABASE
         const SUPABASE_URL = "https://ezyogvjosmrxyytzszx.supabase.co";
         const SUPABASE_KEY = "sb_publishable_QB6TAndK9BizyHSec-xTvg_6VHLUGXX";
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        let supabaseClient = null;
+
+        function getSupabase() {
+            if (!supabaseClient && window.supabase) {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            }
+            return supabaseClient;
+        }
 
         const ADMIN_SECRET = "16De@ctubre";
 
         function verifyLogin() {
-            const pass = document.getElementById('adminPassInput').value;
-            if (pass === ADMIN_SECRET) {
+            const inputVal = document.getElementById('adminPassInput').value.trim();
+            if (inputVal === ADMIN_SECRET) {
                 sessionStorage.setItem('mb_admin_auth', 'true');
                 showDashboard();
             } else {
@@ -276,10 +282,17 @@
         }
 
         async function loadInventory() {
+            const client = getSupabase();
             const tbody = document.getElementById('inventoryTableBody');
             tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Cargando inventario...</td></tr>';
 
-            const { data: productos, error } = await supabase
+            if (!client) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#ef5350;">Conectando con Supabase...</td></tr>';
+                setTimeout(loadInventory, 1000);
+                return;
+            }
+
+            const { data: productos, error } = await client
                 .from('productos')
                 .select('*')
                 .order('id', { ascending: false });
@@ -322,6 +335,7 @@
 
         async function saveProduct(e) {
             e.preventDefault();
+            const client = getSupabase();
             const precioNum = parseInt(document.getElementById('pPrecioNum').value);
             const formattedPrice = '$' + precioNum.toLocaleString('es-CL');
 
@@ -337,7 +351,7 @@
                 estado: 'disponible'
             };
 
-            const { error } = await supabase.from('productos').insert([newProduct]);
+            const { error } = await client.from('productos').insert([newProduct]);
 
             if (error) {
                 alert("Error al guardar: " + error.message);
@@ -349,19 +363,20 @@
         }
 
         async function toggleStock(id, currentStatus) {
+            const client = getSupabase();
             const nextStatus = (currentStatus === 'disponible') ? 'agotado' : 'disponible';
-            const { error } = await supabase.from('productos').update({ estado: nextStatus }).eq('id', id);
+            const { error } = await client.from('productos').update({ estado: nextStatus }).eq('id', id);
             if (!error) loadInventory();
         }
 
         async function deleteProduct(id, name) {
+            const client = getSupabase();
             if (confirm(`¿Estás seguro de eliminar "${name}" del catálogo?`)) {
-                const { error } = await supabase.from('productos').delete().eq('id', id);
+                const { error } = await client.from('productos').delete().eq('id', id);
                 if (!error) loadInventory();
             }
         }
 
-        // Revisar si ya había iniciado sesión en la pestaña
         if (sessionStorage.getItem('mb_admin_auth') === 'true') {
             showDashboard();
         }
