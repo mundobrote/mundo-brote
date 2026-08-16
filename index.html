@@ -73,7 +73,7 @@
         }
 
         .header-social-btn:hover {
-            transform: translateY(-2px) scale(1.05);
+            transform: translateY(-2px scale(1.05));
         }
 
         .btn-cart-floating { 
@@ -1250,7 +1250,7 @@
     <script>
         const SUPABASE_URL = "https://ezyogvjosymrxyytzszx.supabase.co";
         const SUPABASE_KEY = "sb_publishable_QB6TAndK9BizyHSec-xTvg_6VHLUGXX";
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const mbDb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const API_CHAT_URL = "https://bot-mundobrote-production.up.railway.app/api/chat";
 
@@ -1278,7 +1278,7 @@
 
         async function fetchProductsFromSupabase() {
             try {
-                const { data, error } = await supabase
+                const { data, error } = await mbDb
                     .from('productos')
                     .select('*')
                     .order('id', { ascending: true });
