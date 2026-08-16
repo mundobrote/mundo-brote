@@ -3,20 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mundo Brote - Catálogo y Planta</title>
-    <!-- Tipografía Inter & Poppins -->
+    <title>Mundo Brote - Catálogo Oficial</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; }
         body { background-color: #121212; min-height: 100vh; color: white; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 20px 0 0 0; position: relative; }
         .bg-image { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; filter: brightness(0.25); }
         
-        /* CONTENEDOR LÍQUIDO PRINCIPAL */
         .container { width: 90%; max-width: 1300px; text-align: center; margin: 0 auto; flex-grow: 1; padding: 0 15px; }
 
-        /* NAV HEADER */
         .nav-header { 
             display: flex; 
             justify-content: space-between; 
@@ -60,7 +58,6 @@
             transform: translateY(-2px);
         }
 
-        /* ICONOS REDES SOCIALES EN CABECERA */
         .header-social-btn {
             display: inline-flex;
             align-items: center;
@@ -89,7 +86,6 @@
             box-shadow: 0 6px 16px rgba(46, 125, 50, 0.4);
         }
 
-        /* TÍTULO PRINCIPAL */
         .home-title { 
             font-size: 2.3rem; 
             font-weight: 800;
@@ -105,7 +101,6 @@
             text-shadow: 0 4px 12px rgba(0,0,0,0.5);
         }
 
-        /* SUBTÍTULO / MENSAJE DE BIENVENIDA */
         .home-subtitle {
             font-size: 0.95rem;
             font-weight: 300;
@@ -116,7 +111,6 @@
             padding: 0 10px;
         }
 
-        /* BARRA DE BÚSQUEDA Y FILTROS */
         .search-filter-container {
             display: flex;
             gap: 12px;
@@ -204,7 +198,6 @@
         #priceFilterSelect:focus { border-color: #4ade80; }
         #priceFilterSelect option { background: #1a1f1c; color: #ffffff; }
 
-        /* SECCIÓN RESULTADOS DE BÚSQUEDA */
         .search-results-section {
             margin-bottom: 35px;
             text-align: left;
@@ -241,7 +234,6 @@
             padding-bottom: 6px;
         }
 
-        /* CARRUSEL DE CATEGORÍAS */
         .carrusel-categorias {
             display: flex;
             justify-content: center;
@@ -270,9 +262,7 @@
             background-position: center;
             border: 1px solid rgba(255, 255, 255, 0.12);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
-                        border-color 0.3s ease, 
-                        box-shadow 0.3s ease;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         .card-categoria::before {
@@ -326,11 +316,8 @@
             box-shadow: 0 14px 30px rgba(74, 222, 128, 0.15), 0 10px 25px rgba(0, 0, 0, 0.6);
         }
 
-        .card-categoria:hover .card-categoria-title {
-            color: #4ade80;
-        }
+        .card-categoria:hover .card-categoria-title { color: #4ade80; }
 
-        /* SECCIÓN NOVEDADES */
         .seccion-novedades {
             background: rgba(35, 38, 36, 0.65);
             backdrop-filter: blur(12px);
@@ -452,7 +439,6 @@
             color: #4caf50;
         }
 
-        /* GRID CATÁLOGO */
         .plant-grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
@@ -524,7 +510,6 @@
             color: #4caf50; 
         }
 
-        /* AGOTADOS */
         .card-plant.is-out-of-stock, .card-novedad.is-out-of-stock {
             opacity: 0.6;
             filter: grayscale(0.4);
@@ -556,7 +541,6 @@
         .page-view { display: none; }
         .page-view.active { display: block; }
 
-        /* VENTANA MODAL */
         .modal { 
             display: none; 
             position: fixed; 
@@ -793,7 +777,6 @@
         }
         .close-btn:hover { background: rgba(255, 255, 255, 0.25); }
 
-        /* FOOTER MUNDO BROTE */
         .mb-footer {
             background: rgba(18, 22, 20, 0.95);
             backdrop-filter: blur(14px);
@@ -872,7 +855,6 @@
             color: #90a4ae;
         }
 
-        /* ESTILOS DEL CHATBOT WEB FLOTANTE */
         .chat-bubble-btn {
             position: fixed;
             bottom: 25px;
@@ -1154,7 +1136,6 @@
         </div>
     </div>
 
-    <!-- FOOTER MUNDO BROTE -->
     <footer class="mb-footer">
         <div class="mb-footer-container">
             <div class="mb-footer-col">
@@ -1187,16 +1168,15 @@
         </div>
 
         <div class="mb-footer-bottom">
-            <p>© 2026 Mundo Brote. Todos los derechos reservados.</p>
+            <p>© 2026 Mundo Brote. Todos los derechos reservados. <a href="admin.html" style="color:rgba(255,255,255,0.15); text-decoration:none;">🔒</a></p>
         </div>
     </footer>
 
-    <!-- MODAL DE DETALLE -->
     <div id="plantModal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal()">&times;</span>
             <div class="modal-left">
-                <img id="modalImg" src="fondo.jpg" class="modal-img imagen-modal-brote" alt="Foto Real" onclick="ampliarFoto(this.src)">
+                <img id="modalImg" src="fondo.jpg" class="modal-img" alt="Foto Real" onclick="ampliarFoto(this.src)">
             </div>
             <div class="modal-right">
                 <div class="modal-header-info">
@@ -1215,7 +1195,7 @@
                     <div id="growBox" class="toggle-box">
                         <p style="margin-bottom:8px;">Así lucirá desarrollada:</p>
                         <div class="ref-img-container">
-                            <img id="refImg" src="fondo.jpg" class="ref-img imagen-modal-brote" alt="Referencia" onclick="ampliarFoto(this.src)">
+                            <img id="refImg" src="fondo.jpg" class="ref-img" alt="Referencia" onclick="ampliarFoto(this.src)">
                             <span class="ref-badge">⚠️ Imagen de referencia</span>
                         </div>
                     </div>
@@ -1229,7 +1209,6 @@
         </div>
     </div>
 
-    <!-- WIDGET CHATBOT ASISTENTE BOTÁNICO (CONECTADO A TU RAILWAY) -->
     <button class="chat-bubble-btn" onclick="toggleWebChat()" title="Consultar Asistente Botánico">
         🌿
         <span class="chat-badge">IA</span>
@@ -1262,62 +1241,25 @@
         </div>
     </div>
 
+    <div id="foto-modal-completa" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 10000; justify-content: center; align-items: center; cursor: zoom-out;" onclick="cerrarFoto()">
+        <img id="img-ampliada" src="" alt="Planta Ampliada" style="width: 90%; max-width: 850px; height: 80vh; object-fit: contain; border-radius: 16px;">
+        <span style="position: absolute; top: 20px; right: 30px; color: white; font-size: 35px; cursor: pointer;">&times;</span>
+    </div>
+
     <script>
-        const GOOGLE_SHEETS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSoia3X9f5vXSWeNx_f8_0bKUJBDiYjWVSId6QZfJezU6GhEtKLAuZ9InjM5IjKya0k_0v-TgW3BwUK/pub?gid=0&single=true&output=csv";
+        const SUPABASE_URL = "https://ezyogvjosmrxyytzszx.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_QB6TAndK9BizyHSec-xTvg_6VHLUGXX";
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
         const API_CHAT_URL = "https://bot-mundobrote-production.up.railway.app/api/chat";
 
-        let productsData = [
-            { nombre: "Rosario (Senecio rowleyanus)", categoria: "suculentas", precio: "$4.000", foto: "suculentas/rosario.jpg", fotoGrande: "suculentas/rosario-grande.jpg", cuidados: "☀️ Luz: Mucha luz indirecta brillante.\n💧 Agua: Riega solo cuando el sustrato esté 100% seco." },
-            { nombre: "Ceropegia (Cadena de corazones)", categoria: "suculentas", precio: "$4.000", foto: "suculentas/ceropegias.jpg", fotoGrande: "suculentas/ceropegiagrandes.jpg", cuidados: "☀️ Luz: Mucha luz indirecta.\n💧 Agua: Riega solo cuando el sustrato esté totalmente seco." },
-            { nombre: "Shrek (Crassula ovata Gollum)", categoria: "suculentas", precio: "$3.000", foto: "suculentas/shrek.jpg", fotoGrande: "suculentas/shrekgrande.jpg", cuidados: "☀️ Luz: Mucha luz o sol directo.\n💧 Agua: Riego muy escaso." },
-            { nombre: "Rubí (Alternanthera porrigens)", categoria: "suculentas", precio: "$6.000", foto: "suculentas/rubi.jpg", fotoGrande: "suculentas/rubigrande.jpg", cuidados: "☀️ Luz: Mucha luz o sol directo.\n💧 Agua: Riego moderado." },
-            { nombre: "Sedum Tokio", categoria: "suculentas", precio: "$3.000", foto: "suculentas/sedumtokio.jpg", fotoGrande: "suculentas/sedumtokiogrande.jpg", cuidados: "☀️ Luz: Muchísima luz o sol directo.\n💧 Agua: Riego bajo." },
-            { nombre: "Ficus Danielle", categoria: "interior", precio: "$7.000", foto: "interior/ficus.jpg", fotoGrande: "interior/ficusgrande.jpg", cuidados: "☀️ Luz: Mucha luz indirecta brillante.\n💧 Agua: Moderada manteniendo sustrato húmedo sin encharcar." },
-            { nombre: "Ficus Hawaiano (Ficus variegado)", categoria: "interior", precio: "$7.000", foto: "interior/FicusHawaiano.jpg", fotoGrande: "interior/ficushawaianogrande.jpg", cuidados: "☀️ Luz: Luz indirecta muy brillante.\n💧 Agua: Riega cuando los primeros centímetros estén secos." },
-            { nombre: "Tradescantia zebrina", categoria: "interior", precio: "$6.500", foto: "interior/tradescantiazebrina.jpg", fotoGrande: "interior/tradescantiagrande.jpg", cuidados: "☀️ Sol: Luz indirecta brillante.\n💧 Agua: Moderada." },
-            { nombre: "Tradescantia fluminensis", categoria: "interior", precio: "$7.000", foto: "interior/tradescantia.jpg", fotoGrande: "interior/Tradescantiafluminensisgrande.jpg", cuidados: "☀️ Sol: Luz indirecta brillante.\n💧 Agua: Moderada." },
-            { nombre: "Plumoso", categoria: "interior", precio: "$4.500", foto: "interior/plumoso.jpg", fotoGrande: "interior/plumosogrande.jpg", cuidados: "☀️ Sol: Luz indirecta brillante.\n💧 Agua: Frecuente." },
-            { nombre: "Cucharita (Peperomia)", categoria: "interior", precio: "$6.500", foto: "interior/cucharita.jpg", fotoGrande: "interior/cucharitagrande.jpg", cuidados: "☀️ Luz: Luz indirecta brillante.\n💧 Agua: Moderada." },
-            { nombre: "Pink Lady (Callisia repens)", categoria: "interior", precio: "$4.500", foto: "interior/pink.jpg", fotoGrande: "interior/pinkgrande.jpg", cuidados: "☀️ Luz: Mucha luz indirecta brillante.\n💧 Agua: Moderada." },
-            { nombre: "Singonio Verde", categoria: "interior", precio: "$5.500", foto: "interior/singonioverde.jpg", fotoGrande: "interior/singonioverdegrande.jpg", cuidados: "☀️ Luz: Luz indirecta brillante.\n💧 Agua: Moderada." },
-            { nombre: "Singonio Variegado Albo", categoria: "interior", precio: "$10.000", foto: "interior/singonioalbo.jpg", fotoGrande: "interior/singoniomutado.jpg", cuidados: "☀️ Luz: Luz indirecta muy brillante.\n💧 Agua: Moderada." },
-            { nombre: "Incienso (Planta del incienso)", categoria: "interior", precio: "$2.000", foto: "interior/incienso.jpg", fotoGrande: "interior/inciensogrande.jpg", cuidados: "☀️ Luz: Luz indirecta brillante.\n💧 Agua: Alta." },
-            { nombre: "Dólar Blanco ( Planta del dinero)", categoria: "interior", precio: "$3.500", foto: "interior/dolar.jpg", fotoGrande: "interior/dolargrande.jpg", cuidados: "☀️ Luz: Luz indirecta brillante.\n💧 Agua: Moderada a baja." },
-            { nombre: "Helecho ( Helecho Espada)", categoria: "interior", precio: "$4.500", foto: "interior/helechoespada.jpg", fotoGrande: "interior/helechoespadagrande.jpg", cuidados: "☀️ Luz: Luz indirecta brillante.\n💧 Agua: Moderada a baja." },
-            { nombre: "Monalisa (Mona Lavender)", categoria: "interior", precio: "$4.500", foto: "interior/monalisa.jpg", fotoGrande: "interior/monalisagrande.jpg", cuidados: "☀️ Luz: Luz indirecta brillante.\n💧 Agua: Moderada a baja." },
-            { nombre: "Cinerarias", categoria: "flor", precio: "$2.000", foto: "flores/plantacineraria.jpg", fotoGrande: "flores/cinerariasgrande.jpg", cuidados: "☀️ Luz: Abundante indirecta.\n💧 Agua: Por inmersión/plato." },
-            { nombre: "Clavelinos", categoria: "flor", precio: "$1.200", foto: "flores/clavelinos.jpg", fotoGrande: "flores/clavelinosgrandes.jpg", cuidados: "☀️ Luz: Pleno sol.\n💧 Agua: Moderado." },
-            { nombre: "Violeta persia", categoria: "flor", precio: "$7.000", foto: "flores/violetapersia.jpg", fotoGrande: "flores/violetapersiagrande.jpg", cuidados: "☀️ Luz: Brillante sin sol directo.\n💧 Agua: Riego por inmersión." },
-            { nombre: "Ranúnculos", categoria: "flor", precio: "$4.000", foto: "flores/ranunculos.jpg", fotoGrande: "flores/ranunculosgrandes.jpg", cuidados: "☀️ Luz: Sol directo.\n💧 Agua: Moderado." },
-            { nombre: "Primaveras", categoria: "flor", precio: "$3.000", foto: "flores/primavera.jpg", fotoGrande: "flores/primaveragrande.jpg", cuidados: "☀️ Luz: Semisombra.\n💧 Agua: Riego constante." },
-            { nombre: "Caléndulas", categoria: "flor", precio: "$1.000", foto: "flores/calendula.jpg", fotoGrande: "flores/calendulagrande.jpg", cuidados: "☀️ Luz: Pleno sol.\n💧 Agua: Riego moderado." },
-            { nombre: "Orejas de oso", categoria: "flor", precio: "$1.200", foto: "flores/orejasdeoso.jpg", fotoGrande: "flores/orejasdeosogrande.jpg", cuidados: "☀️ Luz: Pleno sol.\n💧 Agua: Moderado a bajo." },
-            { nombre: "Margarita africana", categoria: "flor", precio: "$4.500", foto: "flores/margaritaafricana.jpg", fotoGrande: "flores/margaritaafricanagrande.jpg", cuidados: "☀️ Luz: Pleno sol directo.\n💧 Agua: Riego bajo." },
-            { nombre: "Gazanio", categoria: "flor", precio: "$1.000", foto: "flores/gazanio.jpg", fotoGrande: "flores/gazaniogrande.jpg", cuidados: "☀️ Luz: Pleno sol imperativo.\n💧 Agua: Riego bajo." },
-            { nombre: "Agerantemo (Margarita de Canarias)", categoria: "flor", precio: "$4.500", foto: "flores/margaritadecanarias.jpg", fotoGrande: "flores/margaritadecanariasgrande.jpg", cuidados: "☀️ Luz: Pleno sol.\n💧 Agua: Moderada." },
-            { nombre: "Leptospermum (Árbol del té)", categoria: "flor", precio: "$5.500", foto: "flores/Leptospermum.jpg", fotoGrande: "flores/Leptospermumgrande.jpg", cuidados: "☀️ Luz: Sol directo.\n💧 Agua: Moderada." },
-            { nombre: "coprosma cobre", categoria: "exterior", precio: "$4.000", foto: "exterior/coprosmacobre.jpg", fotoGrande: "exterior/coprosmacobregrande.jpg", cuidados: "☀️ Sol: Pleno sol.\n💧 Agua: Moderado a bajo." },
-            { nombre: "Repollo ornamental", categoria: "exterior", precio: "$1.000", foto: "exterior/repollo.jpg", fotoGrande: "exterior/repollogrande.jpg", cuidados: "☀️ Sol: Pleno sol y frío.\n💧 Agua: Moderada." },
-            { nombre: "ligustrinas", categoria: "exterior", precio: "$2.000", foto: "exterior/ligustrina.jpg", fotoGrande: "exterior/ligustrinagrande.jpg", cuidados: "☀️ Sol: Pleno sol o semisombra.\n💧 Agua: Moderado." },
-            { nombre: "Hiedra colgante", categoria: "exterior", precio: "$6.500", foto: "exterior/hiedracolgante.jpg", fotoGrande: "exterior/hiedracolgantegrande.jpg", cuidados: "☀️ Luz: Luz indirecta brillante o semisombra.\n💧 Agua: Moderada." },
-            { nombre: "Ruda", categoria: "exterior", precio: "$4.000", foto: "exterior/ruda.jpg", fotoGrande: "exterior/rudagrande.jpg", cuidados: "☀️ Sol: Sol directo.\n💧 Agua: Baja a moderada." }
-        ];
-
-        let novedadesNombres = ["Leptospermum (Árbol del té)", "Violeta persia", "Singonio Variegado Albo"];
+        let productsData = [];
         let cart = JSON.parse(localStorage.getItem('mb_cart')) || [];
         let currentPlant = {};
-        let stockStatusMap = {};
-        let optionsListMap = {};
 
         function cleanText(str) {
             if (!str) return "";
             return String(str).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
-        }
-
-        function generateAutoImgPath(plantName, colorName) {
-            const cleanPlant = cleanText(plantName).replace(/\(.*?\)/g, '').trim().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
-            const cleanColor = cleanText(colorName).replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
-            return `opciones-flores/${cleanPlant}-${cleanColor}.jpg`;
         }
 
         function getColorHex(colorText) {
@@ -1333,67 +1275,23 @@
             return '#81c784';
         }
 
-        function parseCSVLine(line) {
-            let result = [];
-            let current = '';
-            let inQuotes = false;
-            for (let i = 0; i < line.length; i++) {
-                let char = line[i];
-                if (char === '"') inQuotes = !inQuotes;
-                else if (char === ',' && !inQuotes) { result.push(current.trim()); current = ''; }
-                else current += char;
-            }
-            result.push(current.trim());
-            return result.map(c => c.replace(/^"|"$/g, '').trim());
-        }
-
-        async function fetchStockAndRender() {
+        async function fetchProductsFromSupabase() {
             try {
-                const antiCacheUrl = GOOGLE_SHEETS_CSV_URL + (GOOGLE_SHEETS_CSV_URL.includes('?') ? '&' : '?') + "t=" + Date.now();
-                const response = await fetch(antiCacheUrl, { cache: "no-store" });
-                const csvText = await response.text();
-                stockStatusMap = {};
-                optionsListMap = {};
-                const lines = csvText.split(/\r\n|\n/);
+                const { data, error } = await supabase
+                    .from('productos')
+                    .select('*')
+                    .order('id', { ascending: true });
 
-                if (lines.length > 1) {
-                    const headers = parseCSVLine(lines[0]).map(h => cleanText(h));
-                    const nameIndex = headers.findIndex(h => h.includes('nombre'));
-                    const statusIndex = headers.findIndex(h => h === 'estado');
-
-                    if (nameIndex !== -1) {
-                        for (let i = 1; i < lines.length; i++) {
-                            if (!lines[i].trim()) continue;
-                            const cols = parseCSVLine(lines[i]);
-                            if (cols[nameIndex] !== undefined) {
-                                const rawPlantName = cols[nameIndex];
-                                const plantName = cleanText(rawPlantName);
-                                if (statusIndex !== -1 && cols[statusIndex] !== undefined) {
-                                    stockStatusMap[plantName] = cleanText(cols[statusIndex]);
-                                }
-
-                                let variants = [];
-                                for (let c = 3; c < cols.length; c += 2) {
-                                    const optNameRaw = cols[c];
-                                    const optStatusRaw = cols[c + 1];
-                                    if (optNameRaw && optNameRaw.trim() !== "") {
-                                        variants.push({
-                                            name: optNameRaw.trim(),
-                                            status: optStatusRaw ? cleanText(optStatusRaw) : "disponible",
-                                            img: generateAutoImgPath(rawPlantName, optNameRaw.trim())
-                                        });
-                                    }
-                                }
-                                if (variants.length > 0) optionsListMap[plantName] = variants;
-                            }
-                        }
-                    }
+                if (error) {
+                    console.error("Error al cargar productos:", error);
+                    return;
                 }
+
+                productsData = data || [];
                 renderCatalog();
                 renderNovedades();
-            } catch (error) {
-                renderCatalog();
-                renderNovedades();
+            } catch (err) {
+                console.error("Error al conectar:", err);
             }
         }
 
@@ -1401,27 +1299,25 @@
             const grid = document.getElementById('gridNovedades');
             if (!grid) return;
             grid.innerHTML = '';
-            novedadesNombres.forEach(nombreBuscado => {
-                const cleanBuscado = cleanText(nombreBuscado);
-                const p = productsData.find(item => cleanText(item.nombre) === cleanBuscado);
-                if (p) {
-                    const isAgotado = (stockStatusMap[cleanBuscado] === 'agotado');
-                    const card = document.createElement('div');
-                    card.className = `card-novedad ${isAgotado ? 'is-out-of-stock' : ''}`;
-                    card.onclick = () => openModal(p.nombre, p.precio, p.cuidados, p.foto, p.fotoGrande, isAgotado);
-                    card.innerHTML = `
-                        <div class="card-novedad-img-wrapper">
-                            ${isAgotado ? '<span class="badge-agotado">⚠️ AGOTADO</span>' : ''}
-                            <img src="${p.foto || 'fondo.jpg'}" class="card-novedad-img" alt="${p.nombre}" onerror="this.src='fondo.jpg'">
-                            <span class="overlay-badge">${isAgotado ? '👁️ Ver Ficha' : '👁️ Ver'}</span>
-                        </div>
-                        <div class="card-novedad-info">
-                            <div class="card-novedad-title">${p.nombre}</div>
-                            <div class="card-novedad-price">${p.precio}</div>
-                        </div>
-                    `;
-                    grid.appendChild(card);
-                }
+            
+            const novedades = productsData.filter(p => p.es_novedad === true);
+            novedades.forEach(p => {
+                const isAgotado = (p.estado === 'agotado');
+                const card = document.createElement('div');
+                card.className = `card-novedad ${isAgotado ? 'is-out-of-stock' : ''}`;
+                card.onclick = () => openModal(p);
+                card.innerHTML = `
+                    <div class="card-novedad-img-wrapper">
+                        ${isAgotado ? '<span class="badge-agotado">⚠️ AGOTADO</span>' : ''}
+                        <img src="${p.foto || 'fondo.jpg'}" class="card-novedad-img" alt="${p.nombre}" onerror="this.src='fondo.jpg'">
+                        <span class="overlay-badge">${isAgotado ? '👁️ Ver Ficha' : '👁️ Ver'}</span>
+                    </div>
+                    <div class="card-novedad-info">
+                        <div class="card-novedad-title">${p.nombre}</div>
+                        <div class="card-novedad-price">${p.precio}</div>
+                    </div>
+                `;
+                grid.appendChild(card);
             });
         }
 
@@ -1435,10 +1331,10 @@
             Object.keys(containers).forEach(cat => { if(containers[cat]) containers[cat].innerHTML = ''; });
 
             productsData.forEach(p => {
-                const isAgotado = (stockStatusMap[cleanText(p.nombre)] === 'agotado');
+                const isAgotado = (p.estado === 'agotado');
                 const card = document.createElement('div');
                 card.className = `card-plant ${isAgotado ? 'is-out-of-stock' : ''}`;
-                card.onclick = () => openModal(p.nombre, p.precio, p.cuidados, p.foto, p.fotoGrande, isAgotado);
+                card.onclick = () => openModal(p);
                 card.innerHTML = `
                     <div class="card-img-wrapper">
                         ${isAgotado ? '<span class="badge-agotado">⚠️ AGOTADO</span>' : ''}
@@ -1480,7 +1376,7 @@
 
             let matches = productsData.filter(p => {
                 const matchesText = !query || cleanText(p.nombre).includes(query) || cleanText(p.cuidados || '').includes(query);
-                const priceNum = parseInt(p.precio.replace(/[^0-9]/g, '')) || 0;
+                const priceNum = p.precio_num || parseInt(p.precio.replace(/[^0-9]/g, '')) || 0;
                 let matchesPrice = true;
                 if (priceRange !== 'all') {
                     const [min, max] = priceRange.split('-').map(Number);
@@ -1491,10 +1387,10 @@
 
             resultsCount.innerText = `${matches.length} planta(s) encontrada(s)`;
             matches.forEach(p => {
-                const isAgotado = (stockStatusMap[cleanText(p.nombre)] === 'agotado');
+                const isAgotado = (p.estado === 'agotado');
                 const card = document.createElement('div');
                 card.className = `card-plant ${isAgotado ? 'is-out-of-stock' : ''}`;
-                card.onclick = () => openModal(p.nombre, p.precio, p.cuidados, p.foto, p.fotoGrande, isAgotado);
+                card.onclick = () => openModal(p);
                 card.innerHTML = `
                     <div class="card-img-wrapper">
                         ${isAgotado ? '<span class="badge-agotado">⚠️ AGOTADO</span>' : ''}
@@ -1521,30 +1417,32 @@
             document.getElementById('btnBackHome').style.display = (viewId === 'home') ? 'none' : 'inline-flex';
         }
 
-        function openModal(nombre, precio, cuidados, imgReal, imgRef, isAgotado = false) {
-            currentPlant = { nombre, precio, isAgotado, defaultImg: imgReal };
-            document.getElementById('modalTitle').innerText = nombre;
-            document.getElementById('modalPrice').innerText = precio;
-            document.getElementById('modalCare').innerText = cuidados || 'Cuidados disponibles en vivero.';
+        function openModal(p) {
+            const isAgotado = (p.estado === 'agotado');
+            currentPlant = { ...p, isAgotado, defaultImg: p.foto };
+
+            document.getElementById('modalTitle').innerText = p.nombre;
+            document.getElementById('modalPrice').innerText = p.precio;
+            document.getElementById('modalCare').innerText = p.cuidados || 'Cuidados disponibles en vivero.';
 
             const modalImg = document.getElementById('modalImg');
             const refImg = document.getElementById('refImg');
             const btnGrow = document.getElementById('btnGrowBox');
             const btnAdd = document.getElementById('btnModalAdd');
 
-            modalImg.src = (imgReal && imgReal !== "0") ? imgReal : "fondo.jpg";
-            if (imgRef && imgRef !== "0") {
-                refImg.src = imgRef;
+            modalImg.src = (p.foto && p.foto !== "0") ? p.foto : "fondo.jpg";
+            if (p.foto_grande && p.foto_grande !== "0") {
+                refImg.src = p.foto_grande;
                 btnGrow.style.display = "flex";
             } else {
                 btnGrow.style.display = "none";
             }
 
-            const variants = optionsListMap[cleanText(nombre)];
+            const variants = (p.opciones && Array.isArray(p.opciones)) ? p.opciones : [];
             const optionsWrapper = document.getElementById('optionsWrapper');
             const variantSelect = document.getElementById('variantSelect');
 
-            if (variants && variants.length > 0) {
+            if (variants.length > 0) {
                 variantSelect.innerHTML = '';
                 variants.forEach(item => {
                     const opt = document.createElement('option');
@@ -1628,7 +1526,6 @@
 
         function closeModal() { document.getElementById('plantModal').style.display = "none"; }
 
-        // FUNCIONES DE LA BURBUJA DE CHAT CONECTADA A LA IA
         function toggleWebChat() {
             const chatWin = document.getElementById('mbWebChat');
             chatWin.style.display = (chatWin.style.display === 'flex') ? 'none' : 'flex';
@@ -1669,17 +1566,6 @@
             messagesList.scrollTop = messagesList.scrollHeight;
         }
 
-        fetchStockAndRender();
-        showView('home');
-    </script>
-
-    <!-- VISOR DE FOTO COMPLETA (LIGHTBOX) -->
-    <div id="foto-modal-completa" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 10000; justify-content: center; align-items: center; cursor: zoom-out;" onclick="cerrarFoto()">
-        <img id="img-ampliada" src="" alt="Planta Ampliada" style="width: 90%; max-width: 850px; height: 80vh; object-fit: contain; border-radius: 16px;">
-        <span style="position: absolute; top: 20px; right: 30px; color: white; font-size: 35px; cursor: pointer;">&times;</span>
-    </div>
-
-    <script>
         function ampliarFoto(urlImagen) {
             document.getElementById('img-ampliada').src = urlImagen;
             document.getElementById('foto-modal-completa').style.display = 'flex';
@@ -1687,6 +1573,9 @@
         function cerrarFoto() {
             document.getElementById('foto-modal-completa').style.display = 'none';
         }
+
+        fetchProductsFromSupabase();
+        showView('home');
     </script>
 </body>
 </html>
