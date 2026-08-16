@@ -12,7 +12,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: #121413; min-height: 100vh; color: #f0f0f0; padding: 25px 15px; }
 
-        /* PANTALLA DE LOGIN */
         .login-card {
             max-width: 400px;
             margin: 100px auto;
@@ -47,11 +46,9 @@
             font-size: 1rem;
             font-weight: 700;
             cursor: pointer;
-            transition: background 0.2s;
         }
         .btn-login:hover { background: #388e3c; }
 
-        /* DASHBOARD PRINCIPAL */
         .dashboard-container {
             display: none;
             max-width: 1200px;
@@ -76,7 +73,6 @@
             font-weight: 600;
         }
 
-        /* FORMULARIO DE PRODUCTO */
         .form-card {
             background: #171c19;
             border: 1px solid rgba(255, 255, 255, 0.12);
@@ -106,6 +102,42 @@
         .form-control:focus { border-color: #4ade80; }
         textarea.form-control { resize: vertical; min-height: 80px; }
 
+        /* VARIANTES / COLORES */
+        .variants-box {
+            background: rgba(0,0,0,0.25);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 18px;
+        }
+        .variants-box h4 { font-size: 0.95rem; color: #4ade80; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-add-var {
+            background: #232a26;
+            color: #81c784;
+            border: 1px solid #81c784;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-weight: 700;
+        }
+        .btn-add-var:hover { background: #81c784; color: #121413; }
+        .variant-row {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr 1fr auto;
+            gap: 10px;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+        .btn-remove-var {
+            background: transparent;
+            color: #ef5350;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+
         .btn-submit {
             background: #2e7d32;
             color: #fff;
@@ -115,11 +147,9 @@
             font-weight: 700;
             cursor: pointer;
             font-size: 0.95rem;
-            transition: background 0.2s;
         }
         .btn-submit:hover { background: #388e3c; }
 
-        /* TABLA DE INVENTARIO */
         .table-responsive {
             background: #171c19;
             border: 1px solid rgba(255, 255, 255, 0.12);
@@ -143,6 +173,17 @@
         .badge-disponible { background: rgba(74, 222, 128, 0.2); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.4); }
         .badge-agotado { background: rgba(239, 83, 80, 0.2); color: #ef5350; border: 1px solid rgba(239, 83, 80, 0.4); }
 
+        .var-chip {
+            display: inline-block;
+            background: rgba(255,255,255,0.08);
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 0.75rem;
+            margin: 2px;
+            cursor: pointer;
+        }
+        .var-chip.var-agotada { text-decoration: line-through; opacity: 0.5; color: #ef5350; }
+
         .btn-delete {
             background: transparent;
             border: 1px solid #ef5350;
@@ -157,7 +198,6 @@
 </head>
 <body>
 
-    <!-- VISTA DE LOGIN -->
     <div id="loginSection" class="login-card">
         <h2>🌿 Mundo Brote</h2>
         <p>Panel de Administración de Inventario</p>
@@ -165,14 +205,12 @@
         <button type="button" class="btn-login" onclick="verifyLogin()">Iniciar Sesión</button>
     </div>
 
-    <!-- VISTA DEL DASHBOARD -->
     <div id="dashboardSection" class="dashboard-container">
         <div class="dash-header">
             <h1>🌿 Gestión de Productos</h1>
             <button class="btn-logout" onclick="logout()">Cerrar Sesión</button>
         </div>
 
-        <!-- FORMULARIO AGREGAR PRODUCTO -->
         <div class="form-card">
             <h3>✨ Agregar Nuevo Producto</h3>
             <form id="productForm" onsubmit="saveProduct(event)">
@@ -203,7 +241,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Ruta Foto Adulta/Referencia (Opcional)</label>
+                        <label>Ruta Foto Referencia Adulta (Opcional)</label>
                         <input type="text" id="pFotoGrande" class="form-control" placeholder="interior/ficusgrande.jpg">
                     </div>
 
@@ -216,6 +254,14 @@
                     </div>
                 </div>
 
+                <div class="variants-box">
+                    <h4>
+                        🎨 Variantes / Colores (Opcional)
+                        <button type="button" class="btn-add-var" onclick="addVariantRow()">+ Agregar Color</button>
+                    </h4>
+                    <div id="variantsContainer"></div>
+                </div>
+
                 <div class="form-group" style="margin-bottom: 15px;">
                     <label>Guía de Cuidados (Luz, Riego, Precauciones)</label>
                     <textarea id="pCuidados" class="form-control" placeholder="☀️ Luz: ...&#10;💧 Agua: ...&#10;⚠️ Precaución: ..."></textarea>
@@ -225,7 +271,6 @@
             </form>
         </div>
 
-        <!-- LISTADO Y CONTROL DE STOCK -->
         <div class="table-responsive">
             <h3 style="color:#81c784; margin-bottom:15px;">📋 Inventario Actual (<span id="totalCount">0</span>)</h3>
             <table>
@@ -235,12 +280,13 @@
                         <th>Nombre</th>
                         <th>Categoría</th>
                         <th>Precio</th>
-                        <th>Estado (Clic p/ cambiar)</th>
+                        <th>Variantes (Clic p/ cambiar stock)</th>
+                        <th>Estado General</th>
                         <th>Acción</th>
                     </tr>
                 </thead>
                 <tbody id="inventoryTableBody">
-                    <tr><td colspan="6" style="text-align:center;">Cargando inventario...</td></tr>
+                    <tr><td colspan="7" style="text-align:center;">Cargando inventario...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -281,13 +327,28 @@
             location.reload();
         }
 
+        function addVariantRow(name = '', img = '', status = 'disponible') {
+            const container = document.getElementById('variantsContainer');
+            const row = document.createElement('div');
+            row.className = 'variant-row';
+            row.innerHTML = `
+                <input type="text" class="form-control var-name" placeholder="Color (ej: Rosado)" value="${name}" required>
+                <input type="text" class="form-control var-img" placeholder="Ruta foto opción (ej: opciones-flores/rosa.jpg)" value="${img}">
+                <select class="form-control var-status">
+                    <option value="disponible" ${status === 'disponible' ? 'selected' : ''}>Disponible</option>
+                    <option value="agotado" ${status === 'agotado' ? 'selected' : ''}>Agotado</option>
+                </select>
+                <button type="button" class="btn-remove-var" onclick="this.parentElement.remove()">✕</button>
+            `;
+            container.appendChild(row);
+        }
+
         async function loadInventory() {
             const client = getSupabase();
             const tbody = document.getElementById('inventoryTableBody');
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Cargando inventario...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Cargando inventario...</td></tr>';
 
             if (!client) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#ef5350;">Conectando con Supabase...</td></tr>';
                 setTimeout(loadInventory, 1000);
                 return;
             }
@@ -298,15 +359,14 @@
                 .order('id', { ascending: false });
 
             if (error) {
-                console.error("Error al cargar inventario:", error);
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#ef5350;">Error al cargar datos.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#ef5350;">Error al cargar datos.</td></tr>';
                 return;
             }
 
             document.getElementById('totalCount').innerText = productos.length;
 
             if (productos.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No hay productos registrados en Supabase. Agrega el primero arriba. 🌿</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No hay productos registrados.</td></tr>';
                 return;
             }
 
@@ -315,11 +375,23 @@
                 const tr = document.createElement('tr');
                 const isAgotado = (p.estado === 'agotado');
 
+                let variantesHtml = '<span style="color:#6b7280; font-size:0.8rem;">Sin variantes</span>';
+                if (p.opciones && Array.isArray(p.opciones) && p.opciones.length > 0) {
+                    variantesHtml = p.opciones.map((opt, idx) => `
+                        <span class="var-chip ${opt.status === 'agotado' ? 'var-agotada' : ''}" 
+                              onclick="toggleVariantStock(${p.id}, ${idx})" 
+                              title="Clic para cambiar stock">
+                            🎨 ${opt.name} (${opt.status === 'agotado' ? 'Agotado' : 'Disp'})
+                        </span>
+                    `).join('');
+                }
+
                 tr.innerHTML = `
                     <td><img src="${p.foto || 'fondo.jpg'}" class="table-img" onerror="this.src='fondo.jpg'"></td>
                     <td><strong>${p.nombre}</strong></td>
                     <td>${p.categoria}</td>
                     <td>${p.precio}</td>
+                    <td>${variantesHtml}</td>
                     <td>
                         <span class="badge-status ${isAgotado ? 'badge-agotado' : 'badge-disponible'}" onclick="toggleStock(${p.id}, '${p.estado}')">
                             ${isAgotado ? '⚠️ Agotado' : '✅ Disponible'}
@@ -339,6 +411,15 @@
             const precioNum = parseInt(document.getElementById('pPrecioNum').value);
             const formattedPrice = '$' + precioNum.toLocaleString('es-CL');
 
+            const varRows = document.querySelectorAll('.variant-row');
+            let opciones = [];
+            varRows.forEach(row => {
+                const name = row.querySelector('.var-name').value.trim();
+                const img = row.querySelector('.var-img').value.trim();
+                const status = row.querySelector('.var-status').value;
+                if (name) opciones.push({ name, img, status });
+            });
+
             const newProduct = {
                 nombre: document.getElementById('pNombre').value.trim(),
                 categoria: document.getElementById('pCategoria').value,
@@ -348,6 +429,7 @@
                 foto_grande: document.getElementById('pFotoGrande').value.trim() || null,
                 cuidados: document.getElementById('pCuidados').value.trim(),
                 es_novedad: document.getElementById('pEsNovedad').value === 'true',
+                opciones: opciones,
                 estado: 'disponible'
             };
 
@@ -358,6 +440,7 @@
             } else {
                 alert("¡Planta agregada exitosamente! 🌿");
                 document.getElementById('productForm').reset();
+                document.getElementById('variantsContainer').innerHTML = '';
                 loadInventory();
             }
         }
@@ -367,6 +450,19 @@
             const nextStatus = (currentStatus === 'disponible') ? 'agotado' : 'disponible';
             const { error } = await client.from('productos').update({ estado: nextStatus }).eq('id', id);
             if (!error) loadInventory();
+        }
+
+        async function toggleVariantStock(productId, varIndex) {
+            const client = getSupabase();
+            const { data: p, error } = await client.from('productos').select('opciones').eq('id', productId).single();
+            if (error || !p || !p.opciones) return;
+
+            let updatedOpciones = [...p.opciones];
+            if (updatedOpciones[varIndex]) {
+                updatedOpciones[varIndex].status = (updatedOpciones[varIndex].status === 'disponible') ? 'agotado' : 'disponible';
+                await client.from('productos').update({ opciones: updatedOpciones }).eq('id', productId);
+                loadInventory();
+            }
         }
 
         async function deleteProduct(id, name) {
