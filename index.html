@@ -51,6 +51,7 @@
             backdrop-filter: blur(6px);
             -webkit-backdrop-filter: blur(6px);
             border: 1px solid rgba(255, 255, 255, 0.2);
+            display: none;
         }
         
         .btn-back:hover {
@@ -1283,7 +1284,7 @@
                     .order('id', { ascending: true });
 
                 if (error) {
-                    console.error("Error al cargar productos:", error);
+                    console.error("Error al cargar productos desde Supabase:", error);
                     return;
                 }
 
@@ -1291,7 +1292,7 @@
                 renderCatalog();
                 renderNovedades();
             } catch (err) {
-                console.error("Error al conectar:", err);
+                console.error("Error de conexión:", err);
             }
         }
 
@@ -1302,7 +1303,7 @@
             
             const novedades = productsData.filter(p => p.es_novedad === true);
             novedades.forEach(p => {
-                const isAgotado = (p.estado === 'agotado');
+                const isAgotado = (p.estado === 'agotado' || p.stock <= 0);
                 const card = document.createElement('div');
                 card.className = `card-novedad ${isAgotado ? 'is-out-of-stock' : ''}`;
                 card.onclick = () => openModal(p);
@@ -1331,7 +1332,7 @@
             Object.keys(containers).forEach(cat => { if(containers[cat]) containers[cat].innerHTML = ''; });
 
             productsData.forEach(p => {
-                const isAgotado = (p.estado === 'agotado');
+                const isAgotado = (p.estado === 'agotado' || p.stock <= 0);
                 const card = document.createElement('div');
                 card.className = `card-plant ${isAgotado ? 'is-out-of-stock' : ''}`;
                 card.onclick = () => openModal(p);
@@ -1387,7 +1388,7 @@
 
             resultsCount.innerText = `${matches.length} planta(s) encontrada(s)`;
             matches.forEach(p => {
-                const isAgotado = (p.estado === 'agotado');
+                const isAgotado = (p.estado === 'agotado' || p.stock <= 0);
                 const card = document.createElement('div');
                 card.className = `card-plant ${isAgotado ? 'is-out-of-stock' : ''}`;
                 card.onclick = () => openModal(p);
@@ -1413,12 +1414,18 @@
 
         function showView(viewId) {
             document.querySelectorAll('.page-view').forEach(view => view.classList.remove('active'));
-            document.getElementById('view-' + viewId).classList.add('active');
-            document.getElementById('btnBackHome').style.display = (viewId === 'home') ? 'none' : 'inline-flex';
+            const targetView = document.getElementById('view-' + viewId);
+            if (targetView) targetView.classList.add('active');
+            
+            const btnBack = document.getElementById('btnBackHome');
+            if (btnBack) {
+                btnBack.style.display = (viewId === 'home') ? 'none' : 'inline-flex';
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function openModal(p) {
-            const isAgotado = (p.estado === 'agotado');
+            const isAgotado = (p.estado === 'agotado' || p.stock <= 0);
             currentPlant = { ...p, isAgotado, defaultImg: p.foto };
 
             document.getElementById('modalTitle').innerText = p.nombre;
@@ -1445,11 +1452,13 @@
             if (variants.length > 0) {
                 variantSelect.innerHTML = '';
                 variants.forEach(item => {
+                    const optStock = (item.stock !== undefined) ? item.stock : 10;
+                    const isVarAgotada = (item.status === 'agotado' || optStock <= 0);
                     const opt = document.createElement('option');
                     opt.value = item.name;
-                    opt.innerText = item.name + (item.status === 'agotado' ? ' (Agotado)' : '');
+                    opt.innerText = item.name + (isVarAgotada ? ' (Agotado)' : '');
                     if (item.img) opt.dataset.img = item.img;
-                    if (item.status === 'agotado') opt.dataset.agotado = 'true';
+                    if (isVarAgotada) opt.dataset.agotado = 'true';
                     variantSelect.appendChild(opt);
                 });
                 optionsWrapper.style.display = 'block';
@@ -1516,7 +1525,8 @@
 
         function updateCartBadge() {
             cart = JSON.parse(localStorage.getItem('mb_cart')) || [];
-            document.getElementById('cartCount').innerText = cart.length;
+            const countEl = document.getElementById('cartCount');
+            if (countEl) countEl.innerText = cart.length;
         }
 
         function toggleBox(boxId) {
