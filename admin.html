@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mundo Brote - Panel de Control</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: #121413; min-height: 100vh; color: #f0f0f0; padding: 25px 15px; }
+
+        .login-card {
+            max-width: 400px;
+            margin: 100px auto;
+            background: rgba(26, 31, 28, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+        .login-card h2 { font-size: 1.6rem; color: #4ade80; margin-bottom: 8px; }
+        .login-card p { color: #90a4ae; font-size: 0.9rem; margin-bottom: 20px; }
+        .login-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: #171c19;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            margin-bottom: 16px;
+            outline: none;
+        }
+        .login-input:focus { border-color: #4ade80; }
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: #2e7d32;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .btn-login:hover { background: #388e3c; }
+
+        .dashboard-container {
+            display: none;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+        .dash-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.12);
+        }
+        .dash-header h1 { font-size: 1.8rem; color: #4ade80; display: flex; align-items: center; gap: 8px; }
+        .btn-logout {
+            background: rgba(220, 38, 38, 0.2);
+            color: #ef5350;
+            border: 1px solid rgba(220, 38, 38, 0.4);
+            padding: 8px 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .form-card {
+            background: #171c19;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 35px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: border-color 0.3s ease;
+        }
+        .form-card.edit-mode {
+            border-color: #facc15;
+            box-shadow: 0 0 20px rgba(250, 204, 21, 0.2);
+        }
+        .form-card h3 { font-size: 1.2rem; color: #81c784; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { font-size: 0.85rem; color: #b0bec5; font-weight: 600; }
+        .form-control {
+            padding: 10px 14px;
+            background: #232a26;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        .form-control:focus { border-color: #4ade80; }
+        textarea.form-control { resize: vertical; min-height: 70px; }
+
+        .variants-box {
+            background: rgba(0,0,0,0.25);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 18px;
+        }
+        .variants-box h4 { font-size: 0.95rem; color: #4ade80; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-add-var {
+            background: #232a26;
+            color: #81c784;
+            border: 1px solid #81c784;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-weight: 700;
+        }
+        .btn-add-var:hover { background: #81c784; color: #121413; }
+        .variant-row {
+            display: grid;
+            grid-template-columns: 1.2fr 1.5fr 0.8fr auto;
+            gap: 10px;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+        .btn-remove-var {
+            background: transparent;
+            color: #ef5350;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+
+        .btn-submit-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .btn-submit {
+            background: #2e7d32;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+        .btn-submit:hover { background: #388e3c; }
+        .btn-cancel-edit {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: none;
+        }
+        .btn-cancel-edit:hover { background: rgba(255, 255, 255, 0.2); }
+
+        .table-responsive {
+            background: #171c19;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
+            overflow-x: auto;
+            padding: 20px;
+        }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 0.9rem; }
+        th { color: #81c784; font-weight: 700; }
+        .table-img { width: 48px; height: 48px; object-fit: cover; border-radius: 6px; }
+        
+        .stock-control {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #232a26;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 6px;
+            padding: 2px 6px;
+        }
+        .btn-qty {
+            background: transparent;
+            border: none;
+            color: #4ade80;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            padding: 0 4px;
+        }
+        .btn-qty:hover { color: #ffffff; }
+        .qty-val {
+            font-weight: 700;
+            font-size: 0.9rem;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .badge-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .badge-disponible { background: rgba(74, 222, 128, 0.2); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.4); }
+        .badge-agotado { background: rgba(239, 83, 80, 0.2); color: #ef5350; border: 1px solid rgba(239, 83, 80, 0.4); }
+
+        .var-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 0.8rem;
+            margin: 3px;
+        }
+        .var-chip.var-agotada { opacity: 0.5; border-color: rgba(239, 83, 80, 0.4); }
+
+        .actions-group {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        .btn-edit {
+            background: rgba(250, 204, 21, 0.15);
+            border: 1px solid rgba(250, 204, 21, 0.4);
+            color: #facc15;
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .btn-edit:hover { background: #facc15; color: #121413; }
+
+        .btn-delete {
+            background: transparent;
+            border: 1px solid #ef5350;
+            color: #ef5350;
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .btn-delete:hover { background: #ef5350; color: #fff; }
+    </style>
+</head>
+<body>
+
+    <div id="loginSection" class="login-card">
+        <h2>🌿 Mundo Brote</h2>
+        <p>Panel de Administración de Inventario</p>
+        <input type="password" id="adminPassInput" class="login-input" placeholder="Ingresa la contraseña maestra..." onkeydown="if(event.key==='Enter') verifyLogin()">
+        <button type="button" class="btn-login" onclick="verifyLogin()">Iniciar Sesión</button>
+    </div>
+
+    <div id="dashboardSection" class="dashboard-container">
+        <div class="dash-header">
+            <h1>🌿 Gestión de Productos y Stock</h1>
+            <button class="btn-logout" onclick="logout()">Cerrar Sesión</button>
+        </div>
+
+        <div id="formCardContainer" class="form-card">
+            <h3 id="formTitle">✨ Agregar Nuevo Producto</h3>
+            <form id="productForm" onsubmit="handleFormSubmit(event)">
+                <input type="hidden" id="editProductId" value="">
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nombre de la Planta *</label>
+                        <input type="text" id="pNombre" class="form-control" placeholder="Ej: Ficus Danielle" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Categoría *</label>
+                        <select id="pCategoria" class="form-control" required>
+                            <option value="suculentas">🌵 Suculentas y Colgantes</option>
+                            <option value="flor">🌸 Plantas con Flor</option>
+                            <option value="interior">🌿 Interior</option>
+                            <option value="exterior">🌳 Exterior y Jardín</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Precio Numérico * (Ej: 4000)</label>
+                        <input type="number" id="pPrecioNum" class="form-control" placeholder="4000" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Stock Total (Unidades) *</label>
+                        <input type="number" id="pStock" class="form-control" value="3" min="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Ruta Foto Principal * (Ej: interior/ficus.jpg)</label>
+                        <input type="text" id="pFoto" class="form-control" placeholder="interior/ficus.jpg" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Ruta Foto Referencia Adulta (Opcional)</label>
+                        <input type="text" id="pFotoGrande" class="form-control" placeholder="interior/ficusgrande.jpg">
+                    </div>
+
+                    <div class="form-group">
+                        <label>¿Es Novedad? (Aparece en inicio)</label>
+                        <select id="pEsNovedad" class="form-control">
+                            <option value="false">No</option>
+                            <option value="true">Sí</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="variants-box">
+                    <h4>
+                        🎨 Variantes / Colores (Opcional)
+                        <button type="button" class="btn-add-var" onclick="addVariantRow()">+ Agregar Color</button>
+                    </h4>
+                    <div id="variantsContainer"></div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label>Guía de Cuidados (Luz, Riego, Precauciones)</label>
+                    <textarea id="pCuidados" class="form-control" placeholder="☀️ Luz: ...&#10;💧 Agua: ...&#10;⚠️ Precaución: ..."></textarea>
+                </div>
+
+                <div class="btn-submit-group">
+                    <button type="submit" id="btnSubmitForm" class="btn-submit">💾 Guardar Producto</button>
+                    <button type="button" id="btnCancelEdit" class="btn-cancel-edit" onclick="resetFormToCreate()">Cancelar Edición</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="table-responsive">
+            <h3 style="color:#81c784; margin-bottom:15px;">📋 Inventario Actual (<span id="totalCount">0</span>)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Foto</th>
+                        <th>Nombre</th>
+                        <th>Categoría</th>
+                        <th>Precio</th>
+                        <th>Stock Unidades</th>
+                        <th>Variantes / Colores</th>
+                        <th>Estado</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="inventoryTableBody">
+                    <tr><td colspan="8" style="text-align:center;">Cargando inventario...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = "https://ezyogvjosymrxyytzszx.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_QB6TAndK9BizyHSec-xTvg_6VHLUGXX";
+        let mbAdminDb = null;
+        let cachedProducts = [];
+
+        function getSupabase() {
+            if (!mbAdminDb && window.supabase) {
+                mbAdminDb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            }
+            return mbAdminDb;
+        }
+
+        const ADMIN_SECRET = "16De@ctubre";
+
+        function verifyLogin() {
+            const inputVal = document.getElementById('adminPassInput').value.trim();
+            if (inputVal === ADMIN_SECRET) {
+                sessionStorage.setItem('mb_admin_auth', 'true');
+                showDashboard();
+            } else {
+                alert("Contraseña incorrecta 🔒");
+            }
+        }
+
+        function showDashboard() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('dashboardSection').style.display = 'block';
+            loadInventory();
+        }
+
+        function logout() {
+            sessionStorage.removeItem('mb_admin_auth');
+            location.reload();
+        }
+
+        function addVariantRow(name = '', img = '', stock = 3) {
+            const container = document.getElementById('variantsContainer');
+            const row = document.createElement('div');
+            row.className = 'variant-row';
+            row.innerHTML = `
+                <input type="text" class="form-control var-name" placeholder="Color (ej: Rosado)" value="${name}" required>
+                <input type="text" class="form-control var-img" placeholder="Ruta foto opción" value="${img}">
+                <input type="number" class="form-control var-stock" placeholder="Stock" value="${stock}" min="0" required>
+                <button type="button" class="btn-remove-var" onclick="this.parentElement.remove()">✕</button>
+            `;
+            container.appendChild(row);
+        }
+
+        async function loadInventory() {
+            const client = getSupabase();
+            const tbody = document.getElementById('inventoryTableBody');
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Cargando inventario...</td></tr>';
+
+            if (!client) {
+                setTimeout(loadInventory, 800);
+                return;
+            }
+
+            try {
+                const { data: productos, error } = await client
+                    .from('productos')
+                    .select('*')
+                    .order('id', { ascending: true });
+
+                if (error) {
+                    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#ef5350;">Error: ${error.message}</td></tr>`;
+                    return;
+                }
+
+                cachedProducts = productos || [];
+                document.getElementById('totalCount').innerText = cachedProducts.length;
+
+                if (cachedProducts.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">No hay productos registrados.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = '';
+                cachedProducts.forEach(p => {
+                    const tr = document.createElement('tr');
+                    const currentStock = p.stock !== undefined ? p.stock : 3;
+                    const isAgotado = (p.estado === 'agotado' || currentStock <= 0);
+
+                    let variantesHtml = '<span style="color:#6b7280; font-size:0.8rem;">Sin variantes</span>';
+                    if (p.opciones && Array.isArray(p.opciones) && p.opciones.length > 0) {
+                        variantesHtml = p.opciones.map((opt, idx) => {
+                            const optStock = opt.stock !== undefined ? opt.stock : 3;
+                            const isVarAgotada = (optStock <= 0 || opt.status === 'agotado');
+                            return `
+                                <div class="var-chip ${isVarAgotada ? 'var-agotada' : ''}">
+                                    <span>🎨 ${opt.name}</span>
+                                    <div class="stock-control">
+                                        <button class="btn-qty" onclick="changeVarQty(${p.id}, ${idx}, -1)">-</button>
+                                        <span class="qty-val">${optStock}</span>
+                                        <button class="btn-qty" onclick="changeVarQty(${p.id}, ${idx}, 1)">+</button>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
+                    }
+
+                    tr.innerHTML = `
+                        <td><img src="${p.foto || 'fondo.jpg'}" class="table-img" onerror="this.src='fondo.jpg'"></td>
+                        <td><strong>${p.nombre}</strong></td>
+                        <td>${p.categoria}</td>
+                        <td>${p.precio}</td>
+                        <td>
+                            <div class="stock-control">
+                                <button class="btn-qty" onclick="changeProductQty(${p.id}, ${currentStock}, -1)">-</button>
+                                <span class="qty-val">${currentStock}</span>
+                                <button class="btn-qty" onclick="changeProductQty(${p.id}, ${currentStock}, 1)">+</button>
+                            </div>
+                        </td>
+                        <td>${variantesHtml}</td>
+                        <td>
+                            <span class="badge-status ${isAgotado ? 'badge-agotado' : 'badge-disponible'}" onclick="toggleStock(${p.id}, '${p.estado}')">
+                                ${isAgotado ? '⚠️ Agotado' : '✅ Disponible'}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="actions-group">
+                                <button class="btn-edit" onclick="startEditProduct(${p.id})">✏️ Editar</button>
+                                <button class="btn-delete" onclick="deleteProduct(${p.id}, '${p.nombre}')">🗑️</button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#ef5350;">Error: ${err.message}</td></tr>`;
+            }
+        }
+
+        function startEditProduct(productId) {
+            const product = cachedProducts.find(p => p.id === productId);
+            if (!product) return;
+
+            document.getElementById('editProductId').value = product.id;
+            document.getElementById('pNombre').value = product.nombre;
+            document.getElementById('pCategoria').value = product.categoria;
+            document.getElementById('pPrecioNum').value = product.precio_num || parseInt(product.precio.replace(/[^0-9]/g, '')) || 0;
+            document.getElementById('pStock').value = product.stock !== undefined ? product.stock : 3;
+            document.getElementById('pFoto').value = product.foto;
+            document.getElementById('pFotoGrande').value = product.foto_grande || '';
+            document.getElementById('pEsNovedad').value = product.es_novedad ? 'true' : 'false';
+            document.getElementById('pCuidados').value = product.cuidados || '';
+
+            const variantsContainer = document.getElementById('variantsContainer');
+            variantsContainer.innerHTML = '';
+            if (product.opciones && Array.isArray(product.opciones)) {
+                product.opciones.forEach(opt => {
+                    addVariantRow(opt.name, opt.img || '', opt.stock !== undefined ? opt.stock : 3);
+                });
+            }
+
+            document.getElementById('formTitle').innerText = `✏️ Editando: ${product.nombre}`;
+            document.getElementById('btnSubmitForm').innerText = '💾 Guardar Cambios';
+            document.getElementById('btnCancelEdit').style.display = 'inline-block';
+            document.getElementById('formCardContainer').classList.add('edit-mode');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetFormToCreate() {
+            document.getElementById('productForm').reset();
+            document.getElementById('editProductId').value = '';
+            document.getElementById('variantsContainer').innerHTML = '';
+            document.getElementById('pStock').value = '3';
+            document.getElementById('formTitle').innerText = '✨ Agregar Nuevo Producto';
+            document.getElementById('btnSubmitForm').innerText = '💾 Guardar Producto';
+            document.getElementById('btnCancelEdit').style.display = 'none';
+            document.getElementById('formCardContainer').classList.remove('edit-mode');
+        }
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            const client = getSupabase();
+            const editId = document.getElementById('editProductId').value;
+            const precioNum = parseInt(document.getElementById('pPrecioNum').value);
+            const stockNum = parseInt(document.getElementById('pStock').value) || 0;
+            const formattedPrice = '$' + precioNum.toLocaleString('es-CL');
+
+            const varRows = document.querySelectorAll('.variant-row');
+            let opciones = [];
+            varRows.forEach(row => {
+                const name = row.querySelector('.var-name').value.trim();
+                const img = row.querySelector('.var-img').value.trim();
+                const stock = parseInt(row.querySelector('.var-stock').value) || 0;
+                const status = (stock > 0) ? 'disponible' : 'agotado';
+                if (name) opciones.push({ name, img, stock, status });
+            });
+
+            const productPayload = {
+                nombre: document.getElementById('pNombre').value.trim(),
+                categoria: document.getElementById('pCategoria').value,
+                precio: formattedPrice,
+                precio_num: precioNum,
+                stock: stockNum,
+                foto: document.getElementById('pFoto').value.trim(),
+                foto_grande: document.getElementById('pFotoGrande').value.trim() || null,
+                cuidados: document.getElementById('pCuidados').value.trim(),
+                es_novedad: document.getElementById('pEsNovedad').value === 'true',
+                opciones: opciones,
+                estado: (stockNum > 0) ? 'disponible' : 'agotado'
+            };
+
+            let resultError = null;
+
+            if (editId) {
+                const { error } = await client.from('productos').update(productPayload).eq('id', editId);
+                resultError = error;
+            } else {
+                const { error } = await client.from('productos').insert([productPayload]);
+                resultError = error;
+            }
+
+            if (resultError) {
+                alert("Error al procesar: " + resultError.message);
+            } else {
+                alert(editId ? "¡Producto modificado con éxito! 🌿" : "¡Planta agregada al catálogo! 🌿");
+                resetFormToCreate();
+                loadInventory();
+            }
+        }
+
+        async function changeProductQty(id, currentStock, delta) {
+            const client = getSupabase();
+            const newStock = Math.max(0, currentStock + delta);
+            const newStatus = (newStock === 0) ? 'agotado' : 'disponible';
+            await client.from('productos').update({ stock: newStock, estado: newStatus }).eq('id', id);
+            loadInventory();
+        }
+
+        async function changeVarQty(productId, varIndex, delta) {
+            const client = getSupabase();
+            const { data: p, error } = await client.from('productos').select('opciones').eq('id', productId).single();
+            if (error || !p || !p.opciones) return;
+
+            let updatedOpciones = [...p.opciones];
+            if (updatedOpciones[varIndex]) {
+                const currentVarStock = updatedOpciones[varIndex].stock !== undefined ? updatedOpciones[varIndex].stock : 3;
+                const newVarStock = Math.max(0, currentVarStock + delta);
+                updatedOpciones[varIndex].stock = newVarStock;
+                updatedOpciones[varIndex].status = (newVarStock === 0) ? 'agotado' : 'disponible';
+                await client.from('productos').update({ opciones: updatedOpciones }).eq('id', productId);
+                loadInventory();
+            }
+        }
+
+        async function toggleStock(id, currentStatus) {
+            const client = getSupabase();
+            const nextStatus = (currentStatus === 'disponible') ? 'agotado' : 'disponible';
+            await client.from('productos').update({ estado: nextStatus }).eq('id', id);
+            loadInventory();
+        }
+
+        async function deleteProduct(id, name) {
+            const client = getSupabase();
+            if (confirm(`¿Estás seguro de eliminar "${name}" del catálogo?`)) {
+                await client.from('productos').delete().eq('id', id);
+                loadInventory();
+            }
+        }
+
+        if (sessionStorage.getItem('mb_admin_auth') === 'true') {
+            showDashboard();
+        }
+    </script>
+</body>
+</html>
