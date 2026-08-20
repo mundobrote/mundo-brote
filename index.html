@@ -1438,6 +1438,9 @@
                 productsData = data || [];
                 renderCatalog();
                 renderNovedades();
+                
+                // Verifica si la página se cargó con un hash directo (#producto-ID)
+                checkUrlHash();
             } catch (err) {
                 console.error("Error de conexión:", err);
             }
@@ -1597,7 +1600,11 @@
             }
         }
 
-        function openPlantDetail(p) {
+        // ============================================================
+        // LÓGICA DE DETALLE Y ENRUTAMIENTO POR HASH
+        // ============================================================
+
+        function openPlantDetail(p, updateHash = true) {
             const isAgotado = (p.estado === 'agotado' || p.stock <= 0);
             currentPlant = { ...p, isAgotado, defaultImg: p.foto };
 
@@ -1693,7 +1700,35 @@
             detailView.style.display = "flex";
             detailView.scrollTop = 0;
             document.body.style.overflow = "hidden";
+
+            if (updateHash) {
+                window.location.hash = 'producto-' + p.id;
+            }
         }
+
+        function closePlantDetail(updateHash = true) { 
+            document.getElementById('plantDetailFullscreen').style.display = "none"; 
+            document.body.style.overflow = "auto";
+
+            if (updateHash && window.location.hash.startsWith('#producto-')) {
+                history.replaceState(null, document.title, window.location.pathname + window.location.search);
+            }
+        }
+
+        function checkUrlHash() {
+            const hash = window.location.hash;
+            if (hash.startsWith('#producto-')) {
+                const prodId = hash.replace('#producto-', '');
+                const targetPlant = productsData.find(p => String(p.id) === String(prodId));
+                if (targetPlant) {
+                    openPlantDetail(targetPlant, false);
+                }
+            } else if (document.getElementById('plantDetailFullscreen').style.display === 'flex') {
+                closePlantDetail(false);
+            }
+        }
+
+        window.addEventListener('hashchange', checkUrlHash);
 
         function checkVariantStock() {
             const optionsWrapper = document.getElementById('optionsWrapper');
@@ -1747,11 +1782,6 @@
         function toggleBox(boxId) {
             const box = document.getElementById(boxId);
             box.style.display = (box.style.display === "block") ? "none" : "block";
-        }
-
-        function closePlantDetail() { 
-            document.getElementById('plantDetailFullscreen').style.display = "none"; 
-            document.body.style.overflow = "auto";
         }
 
         function toggleWebChat() {
