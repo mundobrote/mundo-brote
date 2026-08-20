@@ -1224,12 +1224,12 @@
                     </div>
                 </div>
 
-                <a href="carrito.html" class="card-categoria cat-cuidados">
+                <div class="card-categoria cat-cuidados" onclick="showView('cat-cuidados')">
                     <div class="card-categoria-content">
                         <div class="card-categoria-title">🪴 Macetas y Cuidados</div>
                         <div class="card-categoria-subtitle">Guía de cuidados, sustratos y macetas.</div>
                     </div>
-                </a>
+                </div>
             </div>
 
             <div class="seccion-novedades">
@@ -1256,6 +1256,11 @@
         <div id="view-cat-exterior" class="page-view">
             <h1 class="cat-title">🌳 Jardín y Exterior</h1>
             <div class="plant-grid" id="list-exterior"></div>
+        </div>
+
+        <div id="view-cat-cuidados" class="page-view">
+            <h1 class="cat-title">🪴 Macetas y Cuidados</h1>
+            <div class="plant-grid" id="list-cuidados"></div>
         </div>
     </div>
 
@@ -1475,7 +1480,8 @@
                 'suculentas': document.getElementById('list-suculentas'),
                 'flor': document.getElementById('list-flor'),
                 'interior': document.getElementById('list-interior'),
-                'exterior': document.getElementById('list-exterior')
+                'exterior': document.getElementById('list-exterior'),
+                'cuidados': document.getElementById('list-cuidados')
             };
             Object.keys(containers).forEach(cat => { if(containers[cat]) containers[cat].innerHTML = ''; });
 
