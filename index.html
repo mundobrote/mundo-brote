@@ -438,6 +438,9 @@
             font-size: 1.15rem;
             font-weight: 800;
             color: #4caf50;
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
         }
 
         .plant-grid { 
@@ -505,10 +508,39 @@
             overflow: hidden;
         }
 
+        .card-price-container {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
         .card-price {
             font-size: 1.25rem;
             font-weight: 800;
             color: #4caf50; 
+        }
+
+        .card-price-before {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #9e9e9e;
+            text-decoration: line-through;
+        }
+
+        .badge-oferta {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: #ef4444;
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 50px;
+            z-index: 10;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            letter-spacing: 0.5px;
         }
 
         .card-plant.is-out-of-stock, .card-novedad.is-out-of-stock {
@@ -534,9 +566,7 @@
         .page-view { display: none; }
         .page-view.active { display: block; }
 
-        /* ============================================================
-           VISTA FULL-SCREEN DETALLE DE PRODUCTO (RESPONSIVE & FLUID)
-           ============================================================ */
+        /* VISTA FULL-SCREEN DETALLE */
         .plant-fullscreen-view {
             display: none;
             position: fixed;
@@ -558,7 +588,6 @@
             to { opacity: 1; transform: scale(1); }
         }
 
-        /* Botón cerrar flotante */
         .fs-close-btn {
             position: fixed;
             top: 18px;
@@ -585,7 +614,6 @@
             background: rgba(255, 255, 255, 0.2);
         }
 
-        /* Mitad superior: Carrusel */
         .fs-gallery-wrapper {
             position: relative;
             width: 100%;
@@ -671,7 +699,6 @@
         .fs-nav-arrow.left { left: 16px; }
         .fs-nav-arrow.right { right: 16px; }
 
-        /* Mitad inferior: Detalles */
         .fs-details-container {
             width: 100%;
             max-width: 780px;
@@ -698,13 +725,25 @@
             letter-spacing: -0.4px;
         }
 
+        .fs-price-container {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+        }
+
         .fs-price {
             font-size: 1.6rem;
             color: #4caf50;
             font-weight: 800;
         }
 
-        /* Selector de color / variantes */
+        .fs-price-before {
+            font-size: 1.15rem;
+            color: #9e9e9e;
+            text-decoration: line-through;
+            font-weight: 500;
+        }
+
         .options-container {
             margin-bottom: 18px;
             text-align: left;
@@ -743,7 +782,6 @@
         }
         .options-select:focus { border-color: #4caf50; }
 
-        /* Acordeones desplegables */
         .btn-toggle-info { 
             width: 100%; 
             padding: 15px 18px; 
@@ -810,7 +848,6 @@
             border-radius: 6px; 
         }
 
-        /* Botón de compra Sticky fijo abajo */
         .fs-bottom-sticky-bar {
             position: fixed;
             bottom: 0;
@@ -862,7 +899,6 @@
             transform: none;
         }
 
-        /* Footer */
         .mb-footer {
             background: rgba(18, 22, 20, 0.95);
             backdrop-filter: blur(14px);
@@ -1223,16 +1259,14 @@
         </div>
     </div>
 
-    <!-- NUEVO CONTENEDOR FULL-SCREEN DE DETALLE -->
+    <!-- CONTENEDOR FULL-SCREEN DE DETALLE -->
     <div id="plantDetailFullscreen" class="plant-fullscreen-view">
         <button class="fs-close-btn" onclick="closePlantDetail()" title="Cerrar">&times;</button>
         
         <!-- Carrusel Superior -->
         <div class="fs-gallery-wrapper">
             <button id="sliderBtnPrev" class="fs-nav-arrow left" onclick="scrollSlider(-1)" style="display: none;">‹</button>
-            <div id="fsSliderContainer" class="fs-slider-container">
-                <!-- Slides inyectados dinámicamente -->
-            </div>
+            <div id="fsSliderContainer" class="fs-slider-container"></div>
             <button id="sliderBtnNext" class="fs-nav-arrow right" onclick="scrollSlider(1)" style="display: none;">›</button>
         </div>
 
@@ -1240,7 +1274,10 @@
         <div class="fs-details-container">
             <div class="fs-header-info">
                 <h1 id="fsTitle" class="fs-title"></h1>
-                <div id="fsPrice" class="fs-price"></div>
+                <div class="fs-price-container">
+                    <span id="fsPrice" class="fs-price"></span>
+                    <span id="fsPriceBefore" class="fs-price-before" style="display: none;"></span>
+                </div>
             </div>
 
             <!-- Variantes / Color -->
@@ -1363,6 +1400,11 @@
             return String(str).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
         }
 
+        function formatCurrency(val) {
+            if (!val) return "";
+            return "$" + parseInt(val).toLocaleString("es-CL");
+        }
+
         function getColorHex(colorText) {
             const str = cleanText(colorText);
             if (str.includes('rosa') || str.includes('rosado')) return '#ff69b4';
@@ -1404,18 +1446,24 @@
             const novedades = productsData.filter(p => p.es_novedad === true);
             novedades.forEach(p => {
                 const isAgotado = (p.estado === 'agotado' || p.stock <= 0);
+                const hasOffer = p.precio_antes && parseInt(p.precio_antes) > (p.precio_num || 0);
+
                 const card = document.createElement('div');
                 card.className = `card-novedad ${isAgotado ? 'is-out-of-stock' : ''}`;
                 card.onclick = () => openPlantDetail(p);
                 card.innerHTML = `
                     <div class="card-novedad-img-wrapper">
+                        ${hasOffer ? '<span class="badge-oferta">🔥 OFERTA</span>' : ''}
                         ${isAgotado ? '<span class="badge-agotado">⚠️ AGOTADO</span>' : ''}
                         <img src="${p.foto || 'fondo.jpg'}" class="card-novedad-img" alt="${p.nombre}" onerror="this.src='fondo.jpg'">
                         <span class="overlay-badge">${isAgotado ? '👁️ Ver Ficha' : '👁️ Ver'}</span>
                     </div>
                     <div class="card-novedad-info">
                         <div class="card-novedad-title">${p.nombre}</div>
-                        <div class="card-novedad-price">${p.precio}</div>
+                        <div class="card-novedad-price">
+                            <span>${p.precio}</span>
+                            ${hasOffer ? `<span class="card-price-before">${formatCurrency(p.precio_antes)}</span>` : ''}
+                        </div>
                     </div>
                 `;
                 grid.appendChild(card);
@@ -1433,17 +1481,23 @@
 
             productsData.forEach(p => {
                 const isAgotado = (p.estado === 'agotado' || p.stock <= 0);
+                const hasOffer = p.precio_antes && parseInt(p.precio_antes) > (p.precio_num || 0);
+
                 const card = document.createElement('div');
                 card.className = `card-plant ${isAgotado ? 'is-out-of-stock' : ''}`;
                 card.onclick = () => openPlantDetail(p);
                 card.innerHTML = `
                     <div class="card-img-wrapper">
+                        ${hasOffer ? '<span class="badge-oferta">🔥 OFERTA</span>' : ''}
                         ${isAgotado ? '<span class="badge-agotado">⚠️ AGOTADO</span>' : ''}
                         <img src="${p.foto || 'fondo.jpg'}" class="card-img" alt="${p.nombre}" onerror="this.src='fondo.jpg'">
                     </div>
                     <div class="card-info">
                         <div class="card-title">${p.nombre}</div>
-                        <div class="card-price">${p.precio}</div>
+                        <div class="card-price-container">
+                            <span class="card-price">${p.precio}</span>
+                            ${hasOffer ? `<span class="card-price-before">${formatCurrency(p.precio_antes)}</span>` : ''}
+                        </div>
                     </div>
                 `;
                 if (containers[p.categoria]) containers[p.categoria].appendChild(card);
@@ -1489,17 +1543,23 @@
             resultsCount.innerText = `${matches.length} planta(s) encontrada(s)`;
             matches.forEach(p => {
                 const isAgotado = (p.estado === 'agotado' || p.stock <= 0);
+                const hasOffer = p.precio_antes && parseInt(p.precio_antes) > (p.precio_num || 0);
+
                 const card = document.createElement('div');
                 card.className = `card-plant ${isAgotado ? 'is-out-of-stock' : ''}`;
                 card.onclick = () => openPlantDetail(p);
                 card.innerHTML = `
                     <div class="card-img-wrapper">
+                        ${hasOffer ? '<span class="badge-oferta">🔥 OFERTA</span>' : ''}
                         ${isAgotado ? '<span class="badge-agotado">⚠️ AGOTADO</span>' : ''}
                         <img src="${p.foto || 'fondo.jpg'}" class="card-img" alt="${p.nombre}" onerror="this.src='fondo.jpg'">
                     </div>
                     <div class="card-info">
                         <div class="card-title">${p.nombre}</div>
-                        <div class="card-price">${p.precio}</div>
+                        <div class="card-price-container">
+                            <span class="card-price">${p.precio}</span>
+                            ${hasOffer ? `<span class="card-price-before">${formatCurrency(p.precio_antes)}</span>` : ''}
+                        </div>
                     </div>
                 `;
                 resultsGrid.appendChild(card);
@@ -1524,7 +1584,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        /* Control del Slider de Fotos */
         function scrollSlider(direction) {
             const slider = document.getElementById('fsSliderContainer');
             if (slider) {
@@ -1532,16 +1591,24 @@
             }
         }
 
-        /* Abrir Vista Completa */
         function openPlantDetail(p) {
             const isAgotado = (p.estado === 'agotado' || p.stock <= 0);
             currentPlant = { ...p, isAgotado, defaultImg: p.foto };
 
             document.getElementById('fsTitle').innerText = p.nombre;
             document.getElementById('fsPrice').innerText = p.precio;
+
+            const priceBeforeEl = document.getElementById('fsPriceBefore');
+            const hasOffer = p.precio_antes && parseInt(p.precio_antes) > (p.precio_num || 0);
+            if (hasOffer) {
+                priceBeforeEl.innerText = formatCurrency(p.precio_antes);
+                priceBeforeEl.style.display = 'inline';
+            } else {
+                priceBeforeEl.style.display = 'none';
+            }
+
             document.getElementById('modalCare').innerText = p.cuidados || 'Cuidados disponibles en vivero.';
 
-            // Renderizado del Carrusel de Fotos
             const sliderContainer = document.getElementById('fsSliderContainer');
             const prevBtn = document.getElementById('sliderBtnPrev');
             const nextBtn = document.getElementById('sliderBtnNext');
@@ -1551,7 +1618,6 @@
             sliderContainer.innerHTML = '';
             let slidesCount = 0;
 
-            // Foto Principal
             const mainImgSrc = (p.foto && p.foto !== "0") ? p.foto : "fondo.jpg";
             const mainSlide = document.createElement('div');
             mainSlide.className = 'fs-slide-item';
@@ -1559,7 +1625,6 @@
             sliderContainer.appendChild(mainSlide);
             slidesCount++;
 
-            // Foto de Referencia / Grande
             if (p.foto_grande && p.foto_grande !== "0") {
                 refImg.src = p.foto_grande;
                 btnGrow.style.display = "flex";
@@ -1576,7 +1641,6 @@
                 btnGrow.style.display = "none";
             }
 
-            // Mostrar/Ocultar flechas del slider
             if (slidesCount > 1) {
                 prevBtn.style.display = 'flex';
                 nextBtn.style.display = 'flex';
@@ -1585,7 +1649,6 @@
                 nextBtn.style.display = 'none';
             }
 
-            // Variantes
             const variants = (p.opciones && Array.isArray(p.opciones)) ? p.opciones : [];
             const optionsWrapper = document.getElementById('optionsWrapper');
             const variantSelect = document.getElementById('variantSelect');
